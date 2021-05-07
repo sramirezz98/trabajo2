@@ -1,0 +1,163 @@
+<div class=text-justify>
+---
+title: "SEGMENTACIÓN DE CLIENTES CORPORATIVOS DE UNA EMPRESA"
+author:
+- Carlos Mario Calle González
+- Catherine Andrea Córdoba Espinosa
+- Allison Piedrahita García
+- Santiago Ramírez Zapata
+- Jhonier Santiago Serna Cardona
+date: "11/05/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ggcorrplot)
+library(GGally)
+library(plotly)
+library(readr)
+library(patchwork)
+library(fmsb)
+library(knitr)
+library(DT)
+```
+
+
+**Objetivo**: Realizar la segmentación de clientes para una empresa cuyos clientes son otras empresas. Explorar las relaciones entre las variables y una posible agrupación de las mismas según sus características.
+
+### Introducción
+Las técnicas de segmentación son una herramienta importante a la hora de trabajar con volúmenes considerables de información referente a diferentes tipos de clientes que hacen parte de un mercado. Esto se debe a que no todos son iguales ni tienen las mismas necesidades, razón por la cual es fundamental conocer las características relevantes de cada uno para agrupar perfiles afines, con el fin de lograr una mejor atención, fidelización de los clientes, tomar decisiones estratégicas y de marketing, ahorrar tiempo y mejorar el rendimiento, entre muchos otros beneficios.
+
+### Contextualización
+
+**Materiales**: Se analizó una base de datos con $2233$ usuarios y $46$ variables en total, las cuales se dividen en 2 grupos principales:
+
+* **Variables de comportamiento de los clientes en canales y productos**: Consta de $30$ variables, divididas en *entradas* y *salidas* según la siguiente nomenclatura:
+  * $en$: Entrada
+  * $sal$: Salida
+  * $vm$: Valor medio anual 
+  * $tx$: Transacciones mensuales promedio
+
+  A continuación se ilustran algunos ejemplos teniendo en cuenta lo mencionado:
+  
+  * **en_vm_canalX**: valor del ticket promedio de entrada por el canal X
+  * **en_tx_canalX**: cantidad de transacciones mensuales de entrada en promedio por el canal X
+  * **sal_vm_canalX**: valor del ticket promedio de salida por el canal X
+  * **sal_tx_canalX**: cantidad de transacciones mensuales de salida en promedio por el canal X
+
+
+  **Notas**: 
+    - Se entiende por "valor del ticket" al valor de una transacción ya sea de entrada o salida.
+    - Entre las transacciones de entrada se pueden encontrar las devoluciones, los recaudos, las consignaciones, entre otros.
+    - Entre las transacciones de salida se pueden encontrar las compras, los pagos, entre otros.
+    - Por canal X se entiende a los medios físicos o virtuales por los cuales se realizan las transacciones de entrada o salida. Entre algunos ejemplos se pueden encontrar las sucursales físicas y las sucursales virtuales.
+
+
+* **Variables de estados financieros y características de los clientes**: Consta de $16$ variables, algunas categorizadas. Estas variables categorizadas son categóricas ordinales:
+
+  * **impo_cv**: [importaciones]/[compras] 
+  * **expo_vt**: [exportaciones]/[ventas]
+  * **cxp**: [cuentas por pagar] categorizada con seis niveles
+  * **cxc**: [cuentas por cobrar] categorizada con seis niveles
+  * **totalinventory**: [valor de inventarios] categorizada con seis niveles
+  * **pagos_pj**: [pagos hechos a personas jurídicas]/[pagos totales]
+  * **pagos_pn**: [pagos hechos a personas naturales]/[pagos totales]
+  * **tiene_ventas_fisicas**: la empresa tiene puntos de venta físicos (1:Si, 0:No)
+  * **tiene_ventas_electronicas**: la empresa tiene ventas electrónicas (1:Si, 0:No)
+  * **recaudos_pj**: [recaudos provenientes de personas jurídicas]/[recaudos totales]
+  * **recaudos_pn**: [recaudos provenientes de personas naturales]/[recaudos totales]
+  * **rotacion_inventarios**: [rotación de inventarios en días] categorizada con seis niveles
+  * **rotacion_cxc**: [rotación de cuentas por pagar en días] categorizada con seis niveles
+  * **rotacion_cxp**: [rotación de cuentas por cobrar en días] categorizada con seis niveles
+  * **ciclo_negocio**: [ciclo de negocio en días] categorizada con seis niveles
+  * **ciclo_financiero**: [ciclo financiero en días] categorizada con seis niveles
+
+```{r echo=FALSE}
+datos_completos <- read.csv("base_trabajo_segmentacion.csv", header = TRUE, sep = ";")
+```
+
+### Análisis descriptivo
+se obtienen las medidas de tendencia central y de dispersión de las variables mencionadas y las correlaciones por pares.
+
+#### **Variables de comportamiento de los clientes en canales y productos:**
+```{r echo=FALSE}
+mediasx <- apply(datos_completos[,-c(1,32:47)],2,mean,na.rm=FALSE)
+minimosx <- apply(datos_completos[,-c(1,32:47)],2,min,na.rm=FALSE)
+maximosx <- apply(datos_completos[,-c(1,32:47)],2,max,na.rm=FALSE)
+desviacionx <- apply(datos_completos[,-c(1,32:47)],2,sd,na.rm=FALSE)
+medianax <- apply(datos_completos[,-c(1,32:47)],2,median,na.rm=FALSE)
+qu1x <- apply(datos_completos[,-c(1,32:47)],2,quantile,0.25, na.rm=FALSE)
+qu3x <- apply(datos_completos[,-c(1,32:47)],2,quantile,0.75, na.rm=FALSE)
+x <- data.frame(mediasx, minimosx, maximosx, desviacionx, medianax, qu1x, qu3x)
+
+datatable(x, colnames=c("Media", "Mínimo", "Máximo", "Desviación estándar", "Mediana", "Cuartil 1", "Cuartil 3"),caption = "MEDIDAS DE TENDENCIA CENTRAL PARA VARIABLES DE COMPORTAMIENTO DE LOS CLIENTES EN CANALES Y PRODUCTOS", class = "cell-border" )
+```
+
+##### **Diagrama de correlación de las variables de comportamiento de los clientes en canales y productos**
+```{r echo=FALSE}
+# Cálculo de la matriz de correlaciones
+cor_mat <- cor(datos_completos[,-c(1,32:47)],use = "na.or.complete")
+# Visualización de la matriz de correlaciones:
+ggcorrplot(cor_mat,method = "square", lab=TRUE, lab_size = 1.4, tl.cex = 8, colors = c("#6D9EC1", "white", "#E46726"))
+```
+
+#### **Variables de estados financieros y características de los clientes:**
+```{r echo=FALSE}
+contar <- function(x, k){
+  n=0
+  for (i in 1:length(x)){
+    if (x[i]==k){
+      n=n+1
+    }
+  }
+  return (n)
+}
+y <- datos_completos[,-c(1:31, 37, 38, 41, 42, 39, 40)]
+unos <- apply(y,2,contar, k=1)
+dos <- apply(y,2,contar, k=2)
+tres <- apply(y,2,contar, k=3)
+cuatro <- apply(y,2,contar, k=4)
+cinco <- apply(y,2,contar, k=5)
+seis <- apply(y,2,contar, k=6)
+
+y1 <- data.frame(unos, dos, tres, cuatro, cinco, seis)
+datatable(y1, colnames=c("Categoría 1", "Categoría 2", "Categoría 3", "Categoria 4", "Categoria 5", "Categoria 6"),caption = "FRECUENCIAS DE LAS VARIABLES DE ESTADOS FINANCIEROS Y CARACTERÍSTICAS DE LOS CLIENTES, CATEGORIZADAS", class = "cell-border")
+
+datatable(table(datos_completos$tiene_ventas_fisicas, datos_completos$tiene_ventas_electronicas), rownames= FALSE, colnames = c("Tiendas físicas", "Tiendas electrónicas", "Frecuencias"), class="cell-border", caption = "¿EL CLIENTE CUENTA CON TIENDA FÍSICA Y/O ELECTRÓNICA [1: Sí, 0: No]?")
+
+mediasw <- apply(datos_completos[,c(37, 38, 41, 42)],2,mean,na.rm=FALSE)
+minimosw <- apply(datos_completos[,c(37, 38, 41, 42)],2,min,na.rm=FALSE)
+maximosw <- apply(datos_completos[,c(37, 38, 41, 42)],2,max,na.rm=FALSE)
+desviacionw <- apply(datos_completos[,c(37, 38, 41, 42)],2,sd,na.rm=FALSE)
+medianaw <- apply(datos_completos[,c(37, 38, 41, 42)],2,median,na.rm=FALSE)
+qu1w <- apply(datos_completos[,c(37, 38, 41, 42)],2,quantile,0.25, na.rm=FALSE)
+qu3w <- apply(datos_completos[,c(37, 38, 41, 42)],2,quantile,0.75, na.rm=FALSE)
+w <- data.frame(mediasw, minimosw, maximosw, desviacionw, medianaw, qu1w, qu3w)
+
+datatable(w, colnames=c("Media", "Mínimo", "Máximo", "Desviación estándar", "Mediana", "Cuartil 1", "Cuartil 3"),caption = "MEDIDAS DE TENDENCIA CENTRAL PARA LOS PAGOS Y RECAUDOS PROVENIENTES DE PERSONAS JURÍDICAS O NATURALES", class = "cell-border")
+```
+
+##### **Diagrama de correlación de las variables de estados financieros y características de los clientes**
+```{r echo=FALSE}
+# Cálculo de la matriz de correlaciones
+cor_mat1 <- cor(datos_completos[,-c(1:31)],use = "na.or.complete")
+# Visualización de la matriz de correlaciones:
+ggcorrplot(cor_mat1,method = "square", lab=TRUE, lab_size = 2.2, tl.cex = 8, colors = c("#6D9EC1", "white", "#E46726"))
+```
+
+
+### Desarrollo estadístico
+
+#### Selección de variables (Análisis de componentes principales)
+#### Agrupación (1, 2, 3)
+#### Selección de agrupación final
+
+### Descripción de resultados
+
+### Conclusiones
+
+</div>

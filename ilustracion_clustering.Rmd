@@ -1,0 +1,164 @@
+---
+title: "Ilustración problemas de agrupamiento"
+author: "Juan David Ospina Arango"
+date: "4/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Ejemplo 1: datos simulados
+
+Simularemos un conjunto de datos con variables numéricas y categóricas binarias:
+
+```{r}
+N <- 200
+set.seed(20210408)
+x1 <- rnorm(N,mean=100,sd=15)
+x2 <- runif(N,28,40)
+x3 <- rpois(N, lambda = 8)
+c1 <- rbinom(N,size=1,prob=0.2)
+c2 <- rbinom(N,size=1, prob=0.6)
+c3 <- rbinom(N, size=1,prob=0.01)
+datos <- data.frame(x1,x2,x3,c1,c2,c3)
+```
+
+Veamos una descripción de los datos con el comando `summary()`:
+
+```{r}
+summary(datos)
+```
+
+```{r}
+pairs(datos)
+```
+
+Hagamos un `pairs()` de solo las variables numéricas (no binarias):
+
+```{r}
+pairs(datos[,c("x1","x2","x3")],col=datos$c1+1,pch=datos$c2+1,cex=datos$c3+1)
+```
+Comenzaremos usando el agrupamiento jerárquico. Para lo cual calcularmos la matriz de distancia correspondiente para cada tipo de variable.
+
+Primero se separa el conjunto de dato en dos: un conjunto con solo las variables binarias y otro con las otras variables numéricas:
+
+```{r}
+datos_cat <- datos[,c("c1","c2","c3")]
+datos_num <- datos[,c("x1","x2","x3")]
+```
+
+Ahora se normaliza el conjunto que tiene las variables numéricas:
+
+```{r}
+datos_num_scaled <- scale(datos_num,center = TRUE, scale = TRUE)
+```
+
+Ahora se calculan las distancias entre los individuos en cada conjunto de datos:
+
+```{r}
+D_cat <- dist(datos_cat,method="binary",diag=TRUE)
+D_num <- dist(datos_num_scaled,diag=TRUE)
+```
+
+Distancias según las variables binarias: 
+
+```{r}
+# Tarea: poner una barra de colores
+image(t(as.matrix(D_cat)[,N:1]), main="Distancias según las variables binarias")
+```
+
+Distancias según las variables numéricas (diferentes de binarias):
+
+```{r}
+# Tarea: poner una barra de colores
+image(t(as.matrix(D_num)[,N:1]), main="Distancias según las variables numéricas")
+```
+
+
+Estamos en un espacio de dimensión $p=p_1+p_2$, si $x_1=[{x_1^{1} }^T\quad {x_1^{2}}^T]^T$ y $x_2=[{x_2^{1} }^T\quad {x_2^{2}}^T]^T$, con $x_1^{1}, x_2^{1} \in \mathbb{R}^{p_1}$ y $x_1^{2}, x_2^{2} \in \mathbb{R}^{p_2}$ y $d_1$ y $d_2$ son funciones de distancia, entonces se puede definir $d_{Tot}(x_1, x_2)=d_1(x_1^{1},x_2^{1})+d_2(x_1^{2},x_2^{2})$.
+
+
+Ahora sumemos las dos matrices de distancias:
+
+```{r}
+D_Tot <- D_cat + D_num
+```
+
+Visualicemos la matriz de distancias total:
+
+```{r}
+image(t(as.matrix(D_Tot)[,N:1]), main="Distancias totales")
+```
+
+Ahora hagamos el agrupamiento jerárquico:
+
+```{r}
+cluster_jerar <- hclust(D_Tot,method = "complete")
+```
+
+Visualicemos el dendograma:
+
+```{r}
+plot(cluster_jerar)
+```
+
+De acuerdo a este gráfico se identifican cinco grupos potencialmente interesantes:
+
+```{r}
+etiqueta_grupo <- cutree(cluster_jerar,k=5)
+```
+
+Veamos cuántos elementos tiene cada grupo:
+
+```{r}
+table(etiqueta_grupo)
+```
+Veamos ahora las características de cada grupo:
+
+Grupo 1:
+
+```{r}
+summary(datos[etiqueta_grupo==1,])
+```
+
+Grupo 2:
+
+```{r}
+summary(datos[etiqueta_grupo==2,])
+```
+
+Grupo 3:
+
+```{r}
+summary(datos[etiqueta_grupo==3,])
+```
+
+Grupo 4:
+
+```{r}
+summary(datos[etiqueta_grupo==4,])
+```
+
+
+
+Grupo 5:
+
+```{r}
+summary(datos[etiqueta_grupo==5,])
+```
+
+
+```{r}
+aggregate(datos_num$x1~etiqueta_grupo,FUN=sd)
+```
+
+
+Fin.
+
+
+
+
+
+

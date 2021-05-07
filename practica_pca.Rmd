@@ -1,0 +1,197 @@
+---
+title: "Práctica de Análisis de Componentes Principales"
+author: "Juan David Ospina Arango <br> Analítica Predictiva <br> Universidad Nacional de Colombia"
+date: "Semestre 2021-01"
+output:
+  html_document:
+    df_print: paged
+---
+
+## Arrestos en los estados de Estados Unidos
+
+Consideremos el conjunto `USArrests` que contiene las estadísticas de arrestos por tipo de crimen por cada cien mil habitantes en los estados de Estados Unidos en 1973.
+
+```{r}
+head(USArrests)
+```
+
+Este conjunto tiene las siguientes dimensiones:
+
+```{r}
+dim(USArrests)
+```
+
+Las cuatro variables son: 
+
+```{r}
+names(USArrests)
+```
+
+Veamos algunas relaciones por pares con ayuda de la función `pairs()`: 
+
+```{r}
+# Tomado de la ayuda de pairs()
+panel.hist <- function(x, ...)
+{
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(usr[1:2], 0, 1.5) )
+    h <- hist(x, plot = FALSE)
+    breaks <- h$breaks; nB <- length(breaks)
+    y <- h$counts; y <- y/max(y)
+    rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
+}
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+{
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(0, 1, 0, 1))
+    r <- abs(cor(x, y))
+    txt <- format(c(r, 0.123456789), digits = digits)[1]
+    txt <- paste0(prefix, txt)
+    if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+    text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+pairs(USArrests, lower.panel = panel.smooth, upper.panel = panel.cor,
+      gap=0, row1attop=FALSE)
+```
+
+## Normalización de los datos
+
+Veamos que pasa con las relaciones por pares cuando se centran y escalan los datos:
+
+```{r}
+# Centrado y escalado de los datos: se resta la media y se divide por la desviación estándar.
+datos_centrados<-scale(USArrests,center = TRUE,scale = TRUE)
+# Misma gráfica anterior pero con los datos escalados:
+pairs(datos_centrados, lower.panel = panel.smooth, upper.panel = panel.cor,
+      gap=0, row1attop=FALSE)
+```
+
+Observemos que podemos obtener la media y la desviación estándar utilizados para escalar la matriz de la siguiente manera:
+
+```{r}
+print("Media:")
+(media<-attr(datos_centrados,"scaled:center"))
+print("Desviación estándar:")
+(desv_est<-attr(datos_centrados,"scaled:scale"))
+```
+
+## Matriz de covarianzas
+
+Ahora obtengamos la matriz de varianzas y covarianzas:
+
+```{r}
+(Sigma<-cov(datos_centrados))
+```
+
+## Descomposición espectral de la matriz de covarianzas
+
+Ahora obtengamos la descomposición espectral de `Sigma`:
+
+```{r}
+descomp_espectr<-eigen(Sigma)
+lambdas<-descomp_espectr$values
+D<-descomp_espectr$vectors
+```
+
+Los valores propios son:
+
+```{r}
+lambdas
+```
+
+Los vectores propios son:
+
+```{r}
+D
+```
+
+
+## Proyección de los datos en el espacio de componentes principales
+
+A continuación se proyectan los datos en el espacio de componentes principales:
+
+```{r}
+datos_proyectados<-t(t(D)%*%t(datos_centrados))
+# datos_proyectados<-datos_centrados%*%D # Esto es una pista
+```
+
+Veamos cómo se ven las relaciones en el espacio de las componentes principales:
+
+```{r}
+pairs(datos_proyectados, lower.panel = panel.smooth, upper.panel = panel.cor,
+      gap=0, row1attop=FALSE)
+```
+
+La correlación entre las variables proyectadas es cero.
+
+Veamos cuál es el porcentaje de varianza explicado por cada componente:
+
+```{r}
+porcentaje_exp<-(lambdas)/sum(lambdas)*100
+barplot(porcentaje_exp,names.arg=paste0("comp",1:4),las=1)
+title(main="Porcentaje de variabilidad atribuido a cada componente")
+```
+
+
+Es decir, que si tomamos las dos primeras componentes principales tendríamos aproximadamente el `r round(sum(lambdas[1:2])/sum(lambdas)*100)`% de la variabilidad del conjunto oringinal.
+
+Esto quiere decir que podríamos reemplazar el conjunto de datos original por el conjunto de datos proyectado incluyendo solo las dos primeras columnas, así:
+
+```{r}
+datos_proyectados[,1:2]
+```
+
+# Reducción de la dimensionalidad
+
+Proyectemos los datos usando solo los dos primeros vectores propios:
+
+```{r}
+D_red<-D[,1:2]
+lambdas_red<-lambdas[1:2]
+(datos_reducidos<-datos_centrados%*%D_red) # Esto es igual a datos_proyectados[,1:2]
+```
+
+## Reconstrucción de la matriz de covarianzas
+
+Tabién se puede reconstruir la matriz de covarianzas escalada (luego es una matriz de correlación) y mirar la calidad de la reconstrucción:
+
+```{r}
+Sigma_rec<-D_red%*%diag(lambdas_red)%*%t(D_red)
+print(Sigma_rec)
+```
+
+## Reconstrucción de los datos originales a partir de la proyección en las dos primeras componentes principales
+
+Reconstruyamos los datos escalados a partir de la proyección en las dos primeras componentes principales:
+
+```{r}
+datos_reconstruidos_esc_cent<-datos_reducidos%*%t(D_red)
+```
+
+Ahora reescalemos los datos reconstruidos para llevarlos a la escala orginal y ver la calidad de la reconstrucción. Para ello primero hay que multiplicar por la desviación estándar y luego sumar la media. La función `scale()` puede hacer esto, pero por defecto esta función primero centra y luego escala. Por esto debemos usarla primero para escalar y luego para centrar:
+
+```{r}
+datos_reconstruidos_cent<-scale(datos_reconstruidos_esc_cent,center =FALSE,scale = 1/desv_est)
+datos_reconstruidos<-scale(datos_reconstruidos_cent,center =(-media),scale = FALSE)
+datos_reconstruidos<-as.data.frame(datos_reconstruidos)
+datos_reconstruidos
+```
+
+
+
+
+## Ejercicios:
+
+1- Reproduzca la expresión en componentes principales y la reducción de dimensionalidad usando la función `princomp()`.
+
+2- Lleve a cabo un agrupamiento jerárquico de las ciudades usando i) los datos centrados y escalados y ii) los datos proyectados en las dos primeras componentes principales. Utilice en ambos casos las mismas distancias entre individuos y entre grupos. Compare los grupos obtenidos.
+
+3- Utilizando lo visto sobre la descomposición en valores propios reconstruya la matemática de la reducción de la dimensionalidad presentada en este documento.
+
+
+
+
+
+
+
+
