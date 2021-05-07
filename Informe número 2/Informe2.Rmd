@@ -83,7 +83,7 @@ datos_completos <- read.csv("base_trabajo_segmentacion.csv", header = TRUE, sep 
 
 
 ```{r}
-datos <- select(datos_completos, -c(recaudos_pj, recaudos_pn))
+datos_completos <- select(datos_completos, -c(recaudos_pj, recaudos_pn))
 ```
 
 ### Análisis descriptivo
