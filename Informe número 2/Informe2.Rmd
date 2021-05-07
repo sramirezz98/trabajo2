@@ -84,7 +84,10 @@ datos_completos <- read.csv("base_trabajo_segmentacion.csv", header = TRUE, sep 
 
 ```{r}
 datos_completos <- select(datos_completos, -c(recaudos_pj, recaudos_pn))
+attach(datos_completos)
 ```
+
+
 
 ### Análisis descriptivo
 se obtienen las medidas de tendencia central y de dispersión de las variables mencionadas y las correlaciones por pares.
@@ -157,15 +160,25 @@ ggcorrplot(cor_mat1,method = "square", lab=TRUE, lab_size = 2.2, tl.cex = 8, col
 
 
 ### Desarrollo estadístico
-para
+
+
+#### Selección de variables
+
+En pirmer lugar, se eliminarón las variables `recaudos_pn` y `recaudos_pj`, porque no contenían información relevante, pues eran una constante igual a $0$. Por el lado de las variables de estados financieros, se eliminan las variables `rotacion_inventarios`, `rotacion_cxc` y `rotacion_cxp`, puesto que desde el punto de vista contable estas se pueden resumir en las variables `ciclo_negocio` y `ciclo_financiero`.
+
 ```{r}
-x <- rnorm(10,2,1.5)
-y <- rnorm(10,4,3)
-plot(y~x)
+datos_cluster <- select(datos_completos, -c(rotacion_inventarios, rotacion_cxc, rotacion_cxp))
 ```
 
-#### Selección de variables (Análisis de componentes principales)
-#### Agrupación (1, 2, 3)
+```{r}
+str(datos_cluster)
+```
+
+#### Agrupación
+
+
+
+
 #### Selección de agrupación final
 
 ### Descripción de resultados
