@@ -15,6 +15,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 library(ggplot2)
 library(ggcorrplot)
 library(GGally)
@@ -78,6 +79,11 @@ Las técnicas de segmentación son una herramienta importante a la hora de traba
 
 ```{r echo=FALSE}
 datos_completos <- read.csv("base_trabajo_segmentacion.csv", header = TRUE, sep = ";")
+```
+
+
+```{r}
+datos <- select(datos_completos, -c(recaudos_pj, recaudos_pn))
 ```
 
 ### Análisis descriptivo
