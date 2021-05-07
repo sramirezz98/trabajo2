@@ -152,6 +152,11 @@ ggcorrplot(cor_mat1,method = "square", lab=TRUE, lab_size = 2.2, tl.cex = 8, col
 
 ### Desarrollo estadístico
 para
+```{r}
+x <- rnorm(10,2,1.5)
+y <- rnorm(10,4,3)
+plot(y~x)
+```
 
 #### Selección de variables (Análisis de componentes principales)
 #### Agrupación (1, 2, 3)
