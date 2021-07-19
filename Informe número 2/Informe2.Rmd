@@ -1,4 +1,10 @@
-<div class=text-justify>
+---
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+::: {.text-justify}
 ---
 title: "SEGMENTACIÓN DE CLIENTES CORPORATIVOS DE UNA EMPRESA"
 author:
@@ -27,72 +33,111 @@ library(knitr)
 library(DT)
 ```
 
-
-**Objetivo**: Realizar la segmentación de clientes para una empresa cuyos clientes son otras empresas. Explorar las relaciones entre las variables y una posible agrupación de las mismas según sus características.
+**Objetivo**: Realizar la segmentación de clientes para una empresa
+cuyos clientes son otras empresas. Explorar las relaciones entre las
+variables y una posible agrupación de las mismas según sus
+características.
 
 ### Introducción
-Las técnicas de segmentación son una herramienta importante a la hora de trabajar con volúmenes considerables de información referente a diferentes tipos de clientes que hacen parte de un mercado. Esto se debe a que no todos son iguales ni tienen las mismas necesidades, razón por la cual es fundamental conocer las características relevantes de cada uno para agrupar perfiles afines, con el fin de lograr una mejor atención, fidelización de los clientes, tomar decisiones estratégicas y de marketing, ahorrar tiempo y mejorar el rendimiento, entre muchos otros beneficios.
+
+Las técnicas de segmentación son una herramienta importante a la hora de
+trabajar con volúmenes considerables de información referente a
+diferentes tipos de clientes que hacen parte de un mercado. Esto se debe
+a que no todos son iguales ni tienen las mismas necesidades, razón por
+la cual es fundamental conocer las características relevantes de cada
+uno para agrupar perfiles afines, con el fin de lograr una mejor
+atención, fidelización de los clientes, tomar decisiones estratégicas y
+de marketing, ahorrar tiempo y mejorar el rendimiento, entre muchos
+otros beneficios.
 
 ### Contextualización
 
-**Materiales**: Se analizó una base de datos con $2233$ usuarios y $46$ variables en total, las cuales se dividen en 2 grupos principales:
+**Materiales**: Se analizó una base de datos con $2233$ usuarios y $46$
+variables en total, las cuales se dividen en 2 grupos principales:
 
-* **Variables de comportamiento de los clientes en canales y productos**: Consta de $30$ variables, divididas en *entradas* y *salidas* según la siguiente nomenclatura:
-  * $en$: Entrada
-  * $sal$: Salida
-  * $vm$: Valor medio anual 
-  * $tx$: Transacciones mensuales promedio
+-   **Variables de comportamiento de los clientes en canales y
+    productos**: Consta de $30$ variables, divididas en *entradas* y
+    *salidas* según la siguiente nomenclatura:
 
-  A continuación se ilustran algunos ejemplos teniendo en cuenta lo mencionado:
-  
-  * **en_vm_canalX**: valor del ticket promedio de entrada por el canal X
-  * **en_tx_canalX**: cantidad de transacciones mensuales de entrada en promedio por el canal X
-  * **sal_vm_canalX**: valor del ticket promedio de salida por el canal X
-  * **sal_tx_canalX**: cantidad de transacciones mensuales de salida en promedio por el canal X
+    -   $en$: Entrada
+    -   $sal$: Salida
+    -   $vm$: Valor medio anual
+    -   $tx$: Transacciones mensuales promedio
 
+    A continuación se ilustran algunos ejemplos teniendo en cuenta lo
+    mencionado:
 
-  **Notas**: 
-    - Se entiende por "valor del ticket" al valor de una transacción ya sea de entrada o salida.
-    - Entre las transacciones de entrada se pueden encontrar las devoluciones, los recaudos, las consignaciones, entre otros.
-    - Entre las transacciones de salida se pueden encontrar las compras, los pagos, entre otros.
-    - Por canal X se entiende a los medios físicos o virtuales por los cuales se realizan las transacciones de entrada o salida. Entre algunos ejemplos se pueden encontrar las sucursales físicas y las sucursales virtuales.
+    -   **en_vm_canalX**: valor del ticket promedio de entrada por el
+        canal X
+    -   **en_tx_canalX**: cantidad de transacciones mensuales de entrada
+        en promedio por el canal X
+    -   **sal_vm_canalX**: valor del ticket promedio de salida por el
+        canal X
+    -   **sal_tx_canalX**: cantidad de transacciones mensuales de salida
+        en promedio por el canal X
 
+    **Notas**:
 
-* **Variables de estados financieros y características de los clientes**: Consta de $16$ variables, algunas categorizadas. Estas variables categorizadas son categóricas ordinales:
+    -   Se entiende por "valor del ticket" al valor de una transacción
+        ya sea de entrada o salida.
+    -   Entre las transacciones de entrada se pueden encontrar las
+        devoluciones, los recaudos, las consignaciones, entre otros.
+    -   Entre las transacciones de salida se pueden encontrar las
+        compras, los pagos, entre otros.
+    -   Por canal X se entiende a los medios físicos o virtuales por los
+        cuales se realizan las transacciones de entrada o salida. Entre
+        algunos ejemplos se pueden encontrar las sucursales físicas y
+        las sucursales virtuales.
 
-  * **impo_cv**: [importaciones]/[compras] 
-  * **expo_vt**: [exportaciones]/[ventas]
-  * **cxp**: [cuentas por pagar] categorizada con seis niveles
-  * **cxc**: [cuentas por cobrar] categorizada con seis niveles
-  * **totalinventory**: [valor de inventarios] categorizada con seis niveles
-  * **pagos_pj**: [pagos hechos a personas jurídicas]/[pagos totales]
-  * **pagos_pn**: [pagos hechos a personas naturales]/[pagos totales]
-  * **tiene_ventas_fisicas**: la empresa tiene puntos de venta físicos (1:Si, 0:No)
-  * **tiene_ventas_electronicas**: la empresa tiene ventas electrónicas (1:Si, 0:No)
-  * **recaudos_pj**: [recaudos provenientes de personas jurídicas]/[recaudos totales]
-  * **recaudos_pn**: [recaudos provenientes de personas naturales]/[recaudos totales]
-  * **rotacion_inventarios**: [rotación de inventarios en días] categorizada con seis niveles
-  * **rotacion_cxc**: [rotación de cuentas por pagar en días] categorizada con seis niveles
-  * **rotacion_cxp**: [rotación de cuentas por cobrar en días] categorizada con seis niveles
-  * **ciclo_negocio**: [ciclo de negocio en días] categorizada con seis niveles
-  * **ciclo_financiero**: [ciclo financiero en días] categorizada con seis niveles
+-   **Variables de estados financieros y características de los
+    clientes**: Consta de $16$ variables, algunas categorizadas. Estas
+    variables categorizadas son categóricas ordinales:
+
+    -   **impo_cv**: [importaciones]/[compras]
+    -   **expo_vt**: [exportaciones]/[ventas]
+    -   **cxp**: [cuentas por pagar] categorizada con seis niveles
+    -   **cxc**: [cuentas por cobrar] categorizada con seis niveles
+    -   **totalinventory**: [valor de inventarios] categorizada con seis
+        niveles
+    -   **pagos_pj**: [pagos hechos a personas jurídicas]/[pagos
+        totales]
+    -   **pagos_pn**: [pagos hechos a personas naturales]/[pagos
+        totales]
+    -   **tiene_ventas_fisicas**: la empresa tiene puntos de venta
+        físicos (1:Si, 0:No)
+    -   **tiene_ventas_electronicas**: la empresa tiene ventas
+        electrónicas (1:Si, 0:No)
+    -   **recaudos_pj**: [recaudos provenientes de personas
+        jurídicas]/[recaudos totales]
+    -   **recaudos_pn**: [recaudos provenientes de personas
+        naturales]/[recaudos totales]
+    -   **rotacion_inventarios**: [rotación de inventarios en días]
+        categorizada con seis niveles
+    -   **rotacion_cxc**: [rotación de cuentas por pagar en días]
+        categorizada con seis niveles
+    -   **rotacion_cxp**: [rotación de cuentas por cobrar en días]
+        categorizada con seis niveles
+    -   **ciclo_negocio**: [ciclo de negocio en días] categorizada con
+        seis niveles
+    -   **ciclo_financiero**: [ciclo financiero en días] categorizada
+        con seis niveles
 
 ```{r echo=FALSE}
 datos_completos <- read.csv("base_trabajo_segmentacion.csv", header = TRUE, sep = ";")
 ```
-
 
 ```{r}
 datos_completos <- select(datos_completos, -c(recaudos_pj, recaudos_pn))
 attach(datos_completos)
 ```
 
-
-
 ### Análisis descriptivo
-se obtienen las medidas de tendencia central y de dispersión de las variables mencionadas y las correlaciones por pares.
+
+se obtienen las medidas de tendencia central y de dispersión de las
+variables mencionadas y las correlaciones por pares.
 
 #### **Variables de comportamiento de los clientes en canales y productos:**
+
 ```{r echo=FALSE}
 mediasx <- apply(datos_completos[,-c(1,32:47)],2,mean,na.rm=FALSE)
 minimosx <- apply(datos_completos[,-c(1,32:47)],2,min,na.rm=FALSE)
@@ -103,10 +148,11 @@ qu1x <- apply(datos_completos[,-c(1,32:47)],2,quantile,0.25, na.rm=FALSE)
 qu3x <- apply(datos_completos[,-c(1,32:47)],2,quantile,0.75, na.rm=FALSE)
 x <- data.frame(mediasx, minimosx, maximosx, desviacionx, medianax, qu1x, qu3x)
 
-datatable(x, colnames=c("Media", "Mínimo", "Máximo", "Desviación estándar", "Mediana", "Cuartil 1", "Cuartil 3"),caption = "MEDIDAS DE TENDENCIA CENTRAL PARA VARIABLES DE COMPORTAMIENTO DE LOS CLIENTES EN CANALES Y PRODUCTOS", class = "cell-border" )
+datatable(x, colnames=c("Media", "Mínimo", "Máximo", "Desviación estándar", "Mediana", "Cuartil 1", "Cuartil 3"), caption = "MEDIDAS DE TENDENCIA CENTRAL PARA VARIABLES DE COMPORTAMIENTO DE LOS CLIENTES EN CANALES Y PRODUCTOS", class = "cell-border")
 ```
 
 ##### **Diagrama de correlación de las variables de comportamiento de los clientes en canales y productos**
+
 ```{r echo=FALSE}
 # Cálculo de la matriz de correlaciones
 cor_mat <- cor(datos_completos[,-c(1,32:47)],use = "na.or.complete")
@@ -115,6 +161,7 @@ ggcorrplot(cor_mat,method = "square", lab=TRUE, lab_size = 1.4, tl.cex = 8, colo
 ```
 
 #### **Variables de estados financieros y características de los clientes:**
+
 ```{r echo=FALSE}
 contar <- function(x, k){
   n=0
@@ -151,6 +198,7 @@ datatable(w, colnames=c("Media", "Mínimo", "Máximo", "Desviación estándar", 
 ```
 
 ##### **Diagrama de correlación de las variables de estados financieros y características de los clientes**
+
 ```{r echo=FALSE}
 # Cálculo de la matriz de correlaciones
 cor_mat1 <- cor(datos_completos[,-c(1:31)],use = "na.or.complete")
@@ -158,13 +206,17 @@ cor_mat1 <- cor(datos_completos[,-c(1:31)],use = "na.or.complete")
 ggcorrplot(cor_mat1,method = "square", lab=TRUE, lab_size = 2.2, tl.cex = 8, colors = c("#6D9EC1", "white", "#E46726"))
 ```
 
-
 ### Desarrollo estadístico
-
 
 #### Selección de variables
 
-En pirmer lugar, se eliminarón las variables `recaudos_pn` y `recaudos_pj`, porque no contenían información relevante, pues eran una constante igual a $0$. Por el lado de las variables de estados financieros, se eliminan las variables `rotacion_inventarios`, `rotacion_cxc` y `rotacion_cxp`, puesto que desde el punto de vista contable estas se pueden resumir en las variables `ciclo_negocio` y `ciclo_financiero`.
+En pirmer lugar, se eliminarón las variables `recaudos_pn` y
+`recaudos_pj`, porque no contenían información relevante, pues eran una
+constante igual a $0$. Por el lado de las variables de estados
+financieros, se eliminan las variables `rotacion_inventarios`,
+`rotacion_cxc` y `rotacion_cxp`, puesto que desde el punto de vista
+contable estas se pueden resumir en las variables `ciclo_negocio` y
+`ciclo_financiero`.
 
 ```{r}
 datos_cluster <- select(datos_completos, -c(rotacion_inventarios, rotacion_cxc, rotacion_cxp))
@@ -176,13 +228,39 @@ str(datos_cluster)
 
 #### Agrupación
 
+Una vez se ha establecido la base de datos con que se trabajará y se ha
+conocido la forma de los datos, se procede con el análisis para
+segmentar a los clientes corporativos. Para cumplir con lo anterior, en
+primer lugar se debe tener alguna medida de similitudes o disimilitudes
+entre las variables, por ello se calcula la distancia de Gower (1971),
+pues esta permite trabajar tanto con variables númericas como
+categóricas. Una forma sencilla de ver esta distancia es que para cada
+uno de los tipos de variables se usa una medida de distancia particular
+que funcione para ese tipo y se escala dicha distancia entre 0 y 1.
+Posteriormente, se calcula la combinación lineal especificando los pesos
+de cada uno de los componentes de la combinación lineal (una forma
+sencilla es usar el promedio), finalmente con esto se crea la matriz de
+distancias.
 
+Las medidas que se usan para cada tipo de variable se describen a
+continuación:
 
+-   Cuantitativa: se calcula la distancia de Manhattan normalizada por
+    rangos.
+
+-   Ordinal: en primer lugar, se clasifica la variable, luego se calcula
+    la distancia Manhattan, con un ajuste especial para los empates.
+
+-   Nominal: las k categorías de la variable se convierte en k columnas
+    binarias y posteriormente se usa el coeficiente de Dice.
+
+Este método es sensible a la no normalidad y a datos atípicos, por lo
+que la transformación de las variables son un paso necesario como parte
+del preprocesamiento de datos.
 
 #### Selección de agrupación final
 
 ### Descripción de resultados
 
 ### Conclusiones
-
-</div>
+:::
