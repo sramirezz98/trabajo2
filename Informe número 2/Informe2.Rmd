@@ -31,6 +31,7 @@ library(patchwork)
 library(fmsb)
 library(knitr)
 library(DT)
+library(cluster)
 ```
 
 **Objetivo**: Realizar la segmentación de clientes para una empresa
@@ -257,7 +258,18 @@ contable estas se pueden resumir en las variables `ciclo_negocio` y
 `ciclo_financiero`.
 
 ```{r}
-datos_cluster <- select(datos_completos, -c(rotacion_inventarios, rotacion_cxc, rotacion_cxp))
+datos_cluster <- select(datos_completos, -c(nit,rotacion_inventarios, rotacion_cxc, rotacion_cxp))
+
+datos_cluster$impo_cv <- ordered(datos_cluster$impo_cv,levels=1:5)
+datos_cluster$expo_vt <- ordered(datos_cluster$expo_vt,levels=1:3)
+datos_cluster$cxp <- ordered(datos_cluster$cxp,levels=1:6)
+datos_cluster$cxc <- ordered(datos_cluster$cxc,levels=1:6)
+datos_cluster$totalinventory <- ordered(datos_cluster$totalinventory,levels=1:6)
+datos_cluster$tiene_ventas_fisicas <- as.factor(datos_cluster$tiene_ventas_fisicas)
+datos_cluster$tiene_ventas_electronicas <- as.factor(datos_cluster$tiene_ventas_electronicas)
+datos_cluster$ciclo_negocio <- ordered(datos_cluster$ciclo_negocio,levels=1:6)
+datos_cluster$ciclo_financiero <- ordered(datos_cluster$ciclo_financiero,levels=1:6)
+
 ```
 
 ```{r}
@@ -295,6 +307,61 @@ continuación:
 Este método es sensible a la no normalidad y a datos atípicos, por lo
 que la transformación de las variables son un paso necesario como parte
 del preprocesamiento de datos.
+
+Explicación función gower distance:
+https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/daisy
+
+```{r}
+dist_gower <- daisy(datos_cluster,metric = "gower")
+dist_gower
+#dissimilarity.mtrx.csv.content = as.matrix(dist_gower)
+#write.table(dissimilarity.mtrx.csv.content,
+#            'dissimilarity.mtrx.csv', 
+#            row.names=FALSE, 
+#            col.names=FALSE, 
+#            sep=",")
+```
+Haciendo agrupamiento jerarquico/aglomerativo, utilizando ward.D como método para medir distancias entre grupos.
+
+
+```{r}
+cluster_jerar <- hclust(dist_gower,method = "ward.D")
+plot(cluster_jerar)
+```
+
+Si seleccionamos 4 grupos
+```{r}
+etiqueta_grupo <- cutree(cluster_jerar,k=4)
+table(etiqueta_grupo)
+```
+Mejorando el dendograma
+```{r}
+library("dendextend")
+dendro <- as.dendrogram(cluster_jerar)
+dendro.col <- dendro %>%
+  set("branches_k_color", k = 4, value =   c("darkslategray", "darkslategray4", "darkslategray3", "gold3")) %>%
+  set("branches_lwd", 0.6) %>%
+  set("labels_colors", 
+      value = c("darkslategray")) %>% 
+  set("labels_cex", 0.5)
+ggd1 <- as.ggdend(dendro.col)
+ggplot(ggd1, theme = theme_minimal()) +
+  labs(x = "Num. observations", y = "Height", title = "Dendrogram, k = 4")
+  
+```
+Ver las características de cada grupo...
+```{r}
+summary(datos_cluster[etiqueta_grupo==1,])
+```
+
+
+Agrupamiento jerarquico divisivo
+
+```{r}
+divisive.clust <- diana(as.matrix(dist_gower), 
+                  diss = TRUE, keep.diss = TRUE)
+plot(divisive.clust, main = "Divisive")
+```
 
 #### Selección de agrupación final
 
