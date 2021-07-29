@@ -207,6 +207,44 @@ ggcorrplot(cor_mat1,method = "square", lab=TRUE, lab_size = 2.2, tl.cex = 8, col
 ```
 
 ### Desarrollo estadístico
+```{r}
+hist(datos_completos$en_vm_canal1)
+hist(datos_completos$en_vm_canal2)
+hist(datos_completos$en_vm_canal3)
+hist(datos_completos$en_vm_canal4)
+hist(datos_completos$en_vm_canal5)
+hist(datos_completos$en_vm_canal6)
+hist(datos_completos$en_vm_canal7)
+hist(datos_completos$en_vm_canal8)
+hist(datos_completos$en_vm_canal9)
+hist(datos_completos$en_vm_canal10)
+hist(datos_completos$en_vm_otros)
+hist(datos_completos$en_tx_canal1)
+hist(datos_completos$en_tx_canal2)
+hist(datos_completos$en_tx_canal3)
+hist(datos_completos$en_tx_canal4)
+hist(datos_completos$en_tx_canal5)
+hist(datos_completos$en_tx_canal6)
+hist(datos_completos$en_tx_canal7)
+hist(datos_completos$en_tx_canal8)
+hist(datos_completos$en_tx_canal9)
+hist(datos_completos$en_tx_canal10)
+hist(datos_completos$en_tx_otros)
+hist(datos_completos$impo_cv)
+hist(datos_completos$expo_vt)
+hist(datos_completos$cxp)
+hist(datos_completos$cxc)
+hist(datos_completos$totalinventory)
+hist(datos_completos$pagos_pj)
+hist(datos_completos$pagos_pn)
+hist(datos_completos$tiene_ventas_fisicas)
+hist(datos_completos$tiene_ventas_electronicas)
+hist(datos_completos$rotacion_inventarios)
+hist(datos_completos$rotacion_cxc)
+hist(datos_completos$rotacion_cxp)
+hist(datos_completos$ciclo_negocio)
+hist(datos_completos$ciclo_financiero)
+```
 
 #### Selección de variables
 
