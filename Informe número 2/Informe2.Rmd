@@ -249,7 +249,7 @@ hist(datos_completos$ciclo_financiero)
 
 #### Selección de variables
 
-En pirmer lugar, se eliminarón las variables `recaudos_pn` y
+En primer lugar, se eliminarón las variables `recaudos_pn` y
 `recaudos_pj`, porque no contenían información relevante, pues eran una
 constante igual a $0$. Por el lado de las variables de estados
 financieros, se eliminan las variables `rotacion_inventarios`,
@@ -258,7 +258,23 @@ contable estas se pueden resumir en las variables `ciclo_negocio` y
 `ciclo_financiero`.
 
 ```{r}
+library(gtools)
 datos_cluster <- select(datos_completos, -c(nit,rotacion_inventarios, rotacion_cxc, rotacion_cxp))
+percentil<-quantcut(datos_cluster$en_vm_canal1, q = 10)
+datos_cluster$percentil <- percentil
+datos_cluster$percentil <- as.character(datos_cluster$percentil)
+datos_cluster <- datos_cluster %>% mutate(percentil = ifelse(percentil == "[0,7.93e+05]", 1, percentil), 
+                          percentil = ifelse(percentil == "(7.93e+05,2.5e+07]", 2, percentil),
+                           percentil = ifelse(percentil == "(2.5e+07,8.3e+07]", 3, percentil),
+                            percentil = ifelse(percentil == "(8.3e+07,1.78e+08]", 4, percentil),
+                             percentil = ifelse(percentil == "(1.78e+08,3.49e+08]", 5, percentil),
+                              percentil = ifelse(percentil == "(3.49e+08,6.01e+08]", 6, percentil),
+                               percentil = ifelse(percentil == "(6.01e+08,9.63e+08]", 7, percentil),
+                                percentil = ifelse(percentil == "(9.63e+08,1.72e+09]", 8, percentil),
+                                 percentil = ifelse(percentil == "(1.72e+09,3.69e+09]", 9, percentil),
+                                  percentil = ifelse(percentil == "(3.69e+09,2.51e+11]", 10, percentil))
+                                                                                          
+
 
 datos_cluster$impo_cv <- ordered(datos_cluster$impo_cv,levels=1:5)
 datos_cluster$expo_vt <- ordered(datos_cluster$expo_vt,levels=1:3)
@@ -312,14 +328,8 @@ Explicación función gower distance:
 https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/daisy
 
 ```{r}
-dist_gower <- daisy(datos_cluster,metric = "gower")
-dist_gower
-#dissimilarity.mtrx.csv.content = as.matrix(dist_gower)
-#write.table(dissimilarity.mtrx.csv.content,
-#            'dissimilarity.mtrx.csv', 
-#            row.names=FALSE, 
-#            col.names=FALSE, 
-#            sep=",")
+dist_gower <- daisy(datos_cluster,metric = "gower",type = list(asymm=C(38,39)))
+summary(dist_gower)
 ```
 Haciendo agrupamiento jerarquico/aglomerativo, utilizando ward.D como método para medir distancias entre grupos.
 
