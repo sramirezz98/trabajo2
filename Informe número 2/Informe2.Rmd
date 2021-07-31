@@ -260,55 +260,76 @@ contable estas se pueden resumir en las variables `ciclo_negocio` y
 ```{r}
 library(gtools)
 datos_cluster <- select(datos_completos, -c(nit,rotacion_inventarios, rotacion_cxc, rotacion_cxp))
-percentil<-quantcut(datos_cluster$en_vm_canal1, q = 10)
-datos_cluster$percentil <- percentil
-datos_cluster$percentil <- as.character(datos_cluster$percentil)
-datos_cluster <- datos_cluster %>% mutate(percentil = ifelse(percentil == "[0,7.93e+05]", 1, percentil), 
-                          percentil = ifelse(percentil == "(7.93e+05,2.5e+07]", 2, percentil),
-                           percentil = ifelse(percentil == "(2.5e+07,8.3e+07]", 3, percentil),
-                            percentil = ifelse(percentil == "(8.3e+07,1.78e+08]", 4, percentil),
-                             percentil = ifelse(percentil == "(1.78e+08,3.49e+08]", 5, percentil),
-                              percentil = ifelse(percentil == "(3.49e+08,6.01e+08]", 6, percentil),
-                               percentil = ifelse(percentil == "(6.01e+08,9.63e+08]", 7, percentil),
-                                percentil = ifelse(percentil == "(9.63e+08,1.72e+09]", 8, percentil),
-                                 percentil = ifelse(percentil == "(1.72e+09,3.69e+09]", 9, percentil),
-                                  percentil = ifelse(percentil == "(3.69e+09,2.51e+11]", 10, percentil))
+# percentil<-quantcut(datos_cluster$en_vm_canal1, q = 10)
+# datos_cluster$percentil <- percentil
+# datos_cluster$percentil <- as.character(datos_cluster$percentil)
+# datos_cluster <- datos_cluster %>% mutate(percentil = ifelse(percentil == "[0,7.93e+05]", 1, percentil), 
+#                           percentil = ifelse(percentil == "(7.93e+05,2.5e+07]", 2, percentil),
+#                            percentil = ifelse(percentil == "(2.5e+07,8.3e+07]", 3, percentil),
+#                             percentil = ifelse(percentil == "(8.3e+07,1.78e+08]", 4, percentil),
+#                              percentil = ifelse(percentil == "(1.78e+08,3.49e+08]", 5, percentil),
+#                               percentil = ifelse(percentil == "(3.49e+08,6.01e+08]", 6, percentil),
+#                                percentil = ifelse(percentil == "(6.01e+08,9.63e+08]", 7, percentil),
+#                                 percentil = ifelse(percentil == "(9.63e+08,1.72e+09]", 8, percentil),
+#                                  percentil = ifelse(percentil == "(1.72e+09,3.69e+09]", 9, percentil),
+#                                   percentil = ifelse(percentil == "(3.69e+09,2.51e+11]", 10, percentil))
 
-
-
+datos_cluster$en_vm_canal1 <- quantcut(datos_cluster$en_vm_canal1,q = 4,labels = c("1","2","3","4"))
 datos_cluster$en_vm_canal2 <- quantcut(datos_cluster$en_vm_canal2,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_vm_canal3 <- quantcut(datos_cluster$en_vm_canal3,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_vm_canal4 <- quantcut(datos_cluster$en_vm_canal4,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_vm_canal5 <- quantcut(datos_cluster$en_vm_canal5,q = 4,labels = c("1","2","3","4"))
+datos_cluster$en_vm_canal3 <- quantcut(datos_cluster$en_vm_canal3,q = 4)
+levels(datos_cluster$en_vm_canal3) <- c("1", "2", "3","4")
+datos_cluster$en_vm_canal4 <- quantcut(datos_cluster$en_vm_canal4,q = 4)
+levels(datos_cluster$en_vm_canal4) <- c("1", "2", "3","4")
+datos_cluster$en_vm_canal5 <- quantcut(datos_cluster$en_vm_canal5,q = 4)
+levels(datos_cluster$en_vm_canal5) <- c("1", "2", "3","4")
 datos_cluster$en_vm_canal6 <- quantcut(datos_cluster$en_vm_canal6,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_vm_canal7 <- quantcut(datos_cluster$en_vm_canal7,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_vm_canal8 <- quantcut(datos_cluster$en_vm_canal8,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_vm_canal9 <- quantcut(datos_cluster$en_vm_canal9,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_vm_canal10 <- quantcut(datos_cluster$en_vm_canal10,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_vm_otros <- quantcut(datos_cluster$en_vm_otros,q = 4,labels = c("1","2","3","4"))
+datos_cluster$en_vm_canal7 <- quantcut(datos_cluster$en_vm_canal7,q = 4)
+levels(datos_cluster$en_vm_canal7) <- c("1", "2", "3","4")
+datos_cluster$en_vm_canal8 <- quantcut(datos_cluster$en_vm_canal8,q = 4)
+levels(datos_cluster$en_vm_canal8) <- c("1", "2", "3","4")
+datos_cluster$en_vm_canal9 <- quantcut(datos_cluster$en_vm_canal9,q = 4)
+levels(datos_cluster$en_vm_canal9) <- c("1", "2", "3","4")
+datos_cluster$en_vm_canal10 <- quantcut(datos_cluster$en_vm_canal10,q = 4)
+levels(datos_cluster$en_vm_canal10) <- c("1", "2", "3","4")
+datos_cluster$en_vm_otros <- quantcut(datos_cluster$en_vm_otros,q = 4)
+levels(datos_cluster$en_vm_otros) <- c("1", "2", "3","4")
 
 datos_cluster$en_tx_canal1 <- quantcut(datos_cluster$en_tx_canal1,q = 4,labels = c("1","2","3","4"))
 datos_cluster$en_tx_canal2 <- quantcut(datos_cluster$en_tx_canal2,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_tx_canal3 <- quantcut(datos_cluster$en_tx_canal3,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_tx_canal4 <- quantcut(datos_cluster$en_tx_canal4,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_tx_canal5 <- quantcut(datos_cluster$en_tx_canal5,q = 4,labels = c("1","2","3","4"))
+datos_cluster$en_tx_canal3 <- quantcut(datos_cluster$en_tx_canal3,q = 4)
+levels(datos_cluster$en_tx_canal3) <- c("1", "2", "3","4")
+datos_cluster$en_tx_canal4 <- quantcut(datos_cluster$en_tx_canal4,q = 4)
+levels(datos_cluster$en_tx_canal4) <- c("1", "2", "3","4")
+datos_cluster$en_tx_canal5 <- quantcut(datos_cluster$en_tx_canal5,q = 4)
+levels(datos_cluster$en_tx_canal5) <- c("1", "2", "3","4")
 datos_cluster$en_tx_canal6 <- quantcut(datos_cluster$en_tx_canal6,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_tx_canal7 <- quantcut(datos_cluster$en_tx_canal7,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_tx_canal8 <- quantcut(datos_cluster$en_tx_canal8,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_tx_canal9 <- quantcut(datos_cluster$en_tx_canal9,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_tx_canal10 <- quantcut(datos_cluster$en_tx_canal4,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$en_tx_otros <- quantcut(datos_cluster$en_tx_otros,q = 4,labels = c("1","2","3","4"))
+datos_cluster$en_tx_canal7 <- quantcut(datos_cluster$en_tx_canal7,q = 4)
+levels(datos_cluster$en_tx_canal7) <- c("1", "2", "3","4")
+datos_cluster$en_tx_canal8 <- quantcut(datos_cluster$en_tx_canal8,q = 4)
+levels(datos_cluster$en_tx_canal8) <- c("1", "2", "3","4")
+datos_cluster$en_tx_canal9 <- quantcut(datos_cluster$en_tx_canal9,q = 4)
+levels(datos_cluster$en_tx_canal9) <- c("1", "2", "3","4")
+datos_cluster$en_tx_canal10 <- quantcut(datos_cluster$en_tx_canal10,q = 4)
+levels(datos_cluster$en_tx_canal10) <- c("1", "2", "3","4")
+datos_cluster$en_tx_otros <- quantcut(datos_cluster$en_tx_otros,q = 4)
+levels(datos_cluster$en_tx_otros) <- c("1", "2", "3","4")
 
                                                                                           
 datos_cluster$sal_vm_canal2 <- quantcut(datos_cluster$sal_vm_canal2,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$sal_vm_canal5 <- quantcut(datos_cluster$sal_vm_canal5,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$sal_vm_canal8 <- quantcut(datos_cluster$sal_vm_canal8,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$sal_vm_otros <- quantcut(datos_cluster$sal_vm_otros,q = 4,labels = c("1","2","3","4"))
+datos_cluster$sal_vm_canal5 <- quantcut(datos_cluster$sal_vm_canal5,q = 4)
+levels(datos_cluster$sal_vm_canal5) <- c("1", "2", "3","4")
+datos_cluster$sal_vm_canal8 <- quantcut(datos_cluster$sal_vm_canal8,q = 4)
+levels(datos_cluster$sal_vm_canal8) <- c("1", "2", "3","4")
+datos_cluster$sal_vm_otros <- quantcut(datos_cluster$sal_vm_otros,q = 4)
+levels(datos_cluster$sal_vm_otros) <- c("1", "2", "3","4")
 
 datos_cluster$sal_tx_canal2 <- quantcut(datos_cluster$sal_tx_canal2,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$sal_tx_canal5 <- quantcut(datos_cluster$sal_tx_canal5,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$sal_tx_canal8 <- quantcut(datos_cluster$sal_tx_canal8,q = 4,labels = c("1","2","3","4"))
-#datos_cluster$sal_tx_otros <- quantcut(datos_cluster$sal_tx_canal_otros,q = 4,labels = c("1","2","3","4"))
+datos_cluster$sal_tx_canal5 <- quantcut(datos_cluster$sal_tx_canal5,q = 4)
+levels(datos_cluster$sal_tx_canal5) <- c("1", "2", "3","4")
+datos_cluster$sal_tx_canal8 <- quantcut(datos_cluster$sal_tx_canal8,q = 4)
+levels(datos_cluster$sal_tx_canal8) <- c("1", "2", "3","4")
+datos_cluster$sal_tx_otros <- quantcut(datos_cluster$sal_tx_otros,q = 4)
+levels(datos_cluster$sal_tx_otros) <- c("1", "2", "3","4")
 
 datos_cluster$pagos_pj <- quantcut(datos_cluster$pagos_pj,q = 4,labels = c("1","2","3","4"))
 datos_cluster$pagos_pn <- quantcut(datos_cluster$pagos_pn,q = 4,labels = c("1","2","3","4"))
@@ -371,7 +392,7 @@ Explicación función gower distance:
 https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/daisy
 
 ```{r}
-dist_gower <- daisy(datos_cluster,metric = "gower",type = list(asymm=C(38,39)))
+dist_gower <- daisy(datos_cluster,metric = "gower")
 summary(dist_gower)
 ```
 Haciendo agrupamiento jerarquico/aglomerativo, utilizando ward.D como método para medir distancias entre grupos.
