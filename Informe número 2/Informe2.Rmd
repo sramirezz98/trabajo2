@@ -1,6 +1,6 @@
 ---
-editor_options: 
-  markdown: 
+editor_options:
+  markdown:
     wrap: 72
 ---
 
@@ -15,7 +15,9 @@ author:
 - Jhonier Santiago Serna Cardona
 date: "11/05/2021"
 output:
-  html_document: default
+  html_document:
+    theme: united
+    highlight: tango
   pdf_document: default
 ---
 
@@ -32,6 +34,8 @@ library(fmsb)
 library(knitr)
 library(DT)
 library(cluster)
+library(formattable)
+library(tidyr)
 ```
 
 **Objetivo**: Realizar la segmentación de clientes para una empresa
@@ -435,7 +439,7 @@ Haciendo agrupamiento jerarquico/aglomerativo, utilizando ward.D como método pa
 
 
 ```{r}
-cluster_jerar <- hclust(dist_gower,method = "ward.D")
+cluster_jerar <- hclust(dist_gower,method = "complete")
 plot(cluster_jerar)
 ```
 
@@ -461,7 +465,32 @@ ggplot(ggd1, theme = theme_minimal()) +
 ```
 Ver las características de cada grupo...
 ```{r}
-summary(datos_cluster[etiqueta_grupo==1,])
+library(DT)
+descripcion <- summary(datos_cluster[etiqueta_grupo==1,])
+descripcion <- as.data.frame(descripcion)
+descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
+
+descripcion$Freq <- as.character(descripcion$Freq)
+descripcion$Freq <- sapply(strsplit(descripcion$Freq, split=':', fixed=TRUE), function(x) (x[2]))
+descripcion$Freq <- lapply(descripcion$Freq,trimws)
+descripcion$Freq <- as.integer(descripcion$Freq)
+descripcion$Freq <- ifelse(is.na(descripcion$Freq), '', descripcion$Freq)
+
+grupo1 <- pivot_wider(descripcion,names_from = Var2,values_from = Freq)
+
+#formattable(grupo1,list( grupo1[,]= color_tile("#DeF7E9", "#71CA97")))
+
+formattable(grupo1, sapply(names(grupo1), function(row) {
+  row = color_tile("#DeF7E9", "#71CA97")
+})) %>%
+  as.datatable(escape = FALSE,
+               options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
+               rownames = FALSE)
+
+
+
+
+
 ```
 
 
