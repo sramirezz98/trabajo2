@@ -339,6 +339,42 @@ datos_cluster$pagos_pn <- quantcut(datos_cluster$pagos_pn,q = 4,labels = c("1","
 
 
 
+datos_cluster$en_vm_canal1 <- ordered(datos_cluster$en_vm_canal1,levels=1:4)
+datos_cluster$en_vm_canal2 <- ordered(datos_cluster$en_vm_canal2,levels=1:4)
+datos_cluster$en_vm_canal3 <- ordered(datos_cluster$en_vm_canal3,levels=1:4)
+datos_cluster$en_vm_canal4 <- ordered(datos_cluster$en_vm_canal4,levels=1:4)
+datos_cluster$en_vm_canal5 <- ordered(datos_cluster$en_vm_canal5,levels=1:4)
+datos_cluster$en_vm_canal6 <- ordered(datos_cluster$en_vm_canal6,levels=1:4)
+datos_cluster$en_vm_canal7 <- ordered(datos_cluster$en_vm_canal7,levels=1:4)
+datos_cluster$en_vm_canal8 <- ordered(datos_cluster$en_vm_canal8,levels=1:4)
+datos_cluster$en_vm_canal9 <- ordered(datos_cluster$en_vm_canal9,levels=1:4)
+datos_cluster$en_vm_canal10 <- ordered(datos_cluster$en_vm_canal10,levels=1:4)
+datos_cluster$en_vm_otros <- ordered(datos_cluster$en_vm_otros,levels=1:4)
+
+datos_cluster$en_tx_canal1 <- ordered(datos_cluster$en_tx_canal1,levels=1:4)
+datos_cluster$en_tx_canal2 <- ordered(datos_cluster$en_tx_canal2,levels=1:4)
+datos_cluster$en_tx_canal3 <- ordered(datos_cluster$en_tx_canal3,levels=1:4)
+datos_cluster$en_tx_canal4 <- ordered(datos_cluster$en_tx_canal4,levels=1:4)
+datos_cluster$en_tx_canal5 <- ordered(datos_cluster$en_tx_canal5,levels=1:4)
+datos_cluster$en_tx_canal6 <- ordered(datos_cluster$en_tx_canal6,levels=1:4)
+datos_cluster$en_tx_canal7 <- ordered(datos_cluster$en_tx_canal7,levels=1:4)
+datos_cluster$en_tx_canal8 <- ordered(datos_cluster$en_tx_canal8,levels=1:4)
+datos_cluster$en_tx_canal9 <- ordered(datos_cluster$en_tx_canal9,levels=1:4)
+datos_cluster$en_tx_canal10 <- ordered(datos_cluster$en_tx_canal10,levels=1:4)
+datos_cluster$en_tx_otros <- ordered(datos_cluster$en_tx_otros,levels=1:4)
+
+datos_cluster$sal_vm_canal2 <- ordered(datos_cluster$sal_vm_canal2,levels=1:4)
+datos_cluster$sal_vm_canal5 <- ordered(datos_cluster$sal_vm_canal5,levels=1:4)
+datos_cluster$sal_vm_canal8 <- ordered(datos_cluster$sal_vm_canal8,levels=1:4)
+datos_cluster$sal_vm_otros <- ordered(datos_cluster$sal_vm_otros,levels=1:4)
+
+datos_cluster$sal_tx_canal2 <- ordered(datos_cluster$sal_tx_canal2,levels=1:4)
+datos_cluster$sal_tx_canal5 <- ordered(datos_cluster$sal_tx_canal5,levels=1:4)
+datos_cluster$sal_tx_canal8 <- ordered(datos_cluster$sal_tx_canal8,levels=1:4)
+datos_cluster$sal_tx_otros <- ordered(datos_cluster$sal_tx_otros,levels=1:4)
+
+datos_cluster$pagos_pj <- ordered(datos_cluster$pagos_pj,levels=1:4)
+datos_cluster$pagos_pn <- ordered(datos_cluster$pagos_pn,levels=1:4)
 
 datos_cluster$impo_cv <- ordered(datos_cluster$impo_cv,levels=1:5)
 datos_cluster$expo_vt <- ordered(datos_cluster$expo_vt,levels=1:3)
