@@ -21,7 +21,7 @@ output:
   pdf_document: default
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggplot2)
@@ -282,6 +282,7 @@ datos_cluster$en_vm_canal1 <- quantcut(datos_cluster$en_vm_canal1,q = 4,labels =
 datos_cluster$en_vm_canal2 <- quantcut(datos_cluster$en_vm_canal2,q = 4,labels = c("1","2","3","4"))
 datos_cluster$en_vm_canal3 <- quantcut(datos_cluster$en_vm_canal3,q = 4)
 levels(datos_cluster$en_vm_canal3) <- c("1", "2", "3","4")
+
 datos_cluster$en_vm_canal4 <- quantcut(datos_cluster$en_vm_canal4,q = 4)
 levels(datos_cluster$en_vm_canal4) <- c("1", "2", "3","4")
 datos_cluster$en_vm_canal5 <- quantcut(datos_cluster$en_vm_canal5,q = 4)
@@ -390,6 +391,8 @@ datos_cluster$tiene_ventas_electronicas <- as.factor(datos_cluster$tiene_ventas_
 datos_cluster$ciclo_negocio <- ordered(datos_cluster$ciclo_negocio,levels=1:6)
 datos_cluster$ciclo_financiero <- ordered(datos_cluster$ciclo_financiero,levels=1:6)
 
+
+
 ```
 
 ```{r}
@@ -492,15 +495,82 @@ formattable(grupo1, sapply(names(grupo1), function(row) {
 
 
 ```
+Grupo 2
+
+```{r}
+descripcion <- summary(datos_cluster[etiqueta_grupo==2,])
+descripcion <- as.data.frame(descripcion)
+descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
+
+descripcion$Freq <- as.character(descripcion$Freq)
+descripcion$Freq <- sapply(strsplit(descripcion$Freq, split=':', fixed=TRUE), function(x) (x[2]))
+descripcion$Freq <- lapply(descripcion$Freq,trimws)
+descripcion$Freq <- as.integer(descripcion$Freq)
+descripcion$Freq <- ifelse(is.na(descripcion$Freq), '', descripcion$Freq)
+
+grupo1 <- pivot_wider(descripcion,names_from = Var2,values_from = Freq)
+
+#formattable(grupo1,list( grupo1[,]= color_tile("#DeF7E9", "#71CA97")))
+
+formattable(grupo1, sapply(names(grupo1), function(row) {
+  row = color_tile("#DeF7E9", "#71CA97")
+})) %>%
+  as.datatable(escape = FALSE,
+               options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
+               rownames = FALSE)
+```
+grupo 3
+
+```{r}
+descripcion <- summary(datos_cluster[etiqueta_grupo==3,])
+descripcion <- as.data.frame(descripcion)
+descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
+
+descripcion$Freq <- as.character(descripcion$Freq)
+descripcion$Freq <- sapply(strsplit(descripcion$Freq, split=':', fixed=TRUE), function(x) (x[2]))
+descripcion$Freq <- lapply(descripcion$Freq,trimws)
+descripcion$Freq <- as.integer(descripcion$Freq)
+descripcion$Freq <- ifelse(is.na(descripcion$Freq), '', descripcion$Freq)
+
+grupo1 <- pivot_wider(descripcion,names_from = Var2,values_from = Freq)
+
+#formattable(grupo1,list( grupo1[,]= color_tile("#DeF7E9", "#71CA97")))
+
+formattable(grupo1, sapply(names(grupo1), function(row) {
+  row = color_tile("#DeF7E9", "#71CA97")
+})) %>%
+  as.datatable(escape = FALSE,
+               options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
+               rownames = FALSE)
+```
+grupo 4
+
+```{r}
+descripcion <- summary(datos_cluster[etiqueta_grupo==4,])
+descripcion <- as.data.frame(descripcion)
+descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
+
+descripcion$Freq <- as.character(descripcion$Freq)
+descripcion$Freq <- sapply(strsplit(descripcion$Freq, split=':', fixed=TRUE), function(x) (x[2]))
+descripcion$Freq <- lapply(descripcion$Freq,trimws)
+descripcion$Freq <- as.integer(descripcion$Freq)
+descripcion$Freq <- ifelse(is.na(descripcion$Freq), '', descripcion$Freq)
+
+grupo1 <- pivot_wider(descripcion,names_from = Var2,values_from = Freq)
+
+#formattable(grupo1,list( grupo1[,]= color_tile("#DeF7E9", "#71CA97")))
+
+formattable(grupo1, sapply(names(grupo1), function(row) {
+  row = color_tile("#DeF7E9", "#71CA97")
+})) %>%
+  as.datatable(escape = FALSE,
+               options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
+               rownames = FALSE)
+```
 
 
 Agrupamiento jerarquico divisivo
 
-```{r}
-divisive.clust <- diana(as.matrix(dist_gower), 
-                  diss = TRUE, keep.diss = TRUE)
-plot(divisive.clust, main = "Divisive")
-```
 
 #### Selección de agrupación final
 
