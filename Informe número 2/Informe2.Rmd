@@ -1,10 +1,4 @@
----
-editor_options:
-  markdown:
-    wrap: 72
----
-
-::: {.text-justify}
+<div class=text-justify>
 ---
 title: "SEGMENTACIÓN DE CLIENTES CORPORATIVOS DE UNA EMPRESA"
 author:
@@ -13,7 +7,7 @@ author:
 - Allison Piedrahita García
 - Santiago Ramírez Zapata
 - Jhonier Santiago Serna Cardona
-date: "11/05/2021"
+date: "03/08/2021"
 output:
   html_document:
     theme: united
@@ -213,16 +207,16 @@ ggcorrplot(cor_mat1,method = "square", lab=TRUE, lab_size = 2.2, tl.cex = 8, col
 ```
 
 ### Desarrollo estadístico
-#### Selección y procesamiento de variables
+#### 1. Selección y procesamiento de variables
 En primer lugar, se eliminarón las variables `recaudos_pn` y
 `recaudos_pj`, porque no contenían información relevante, pues eran una
 constante igual a $0$. Por el lado de las variables de estados
 financieros, se eliminan las variables `rotacion_inventarios`,
 `rotacion_cxc` y `rotacion_cxp`, puesto que desde el punto de vista
 contable estas se pueden resumir en las variables `ciclo_negocio` y
-`ciclo_financiero`. Adicionalmente, se realiza una estandarización a las variables cuantitativas denominadas como $Variables~~de~~comportamiento~~de~~los~~clientes~~en~~canales~~y~~productos$, para cada una de las observaciones de estas variables se asigna uno de los cuartiles dependiendo el valor que dicha observación tenga. Lo anterior, se hace con el fin de obtener una mejor segmentación de los datos más adelante. Con esta estandarización, el conjunto de variables queda compuesto por variables categóricas ordinales y binarias. 
+`ciclo_financiero`. Adicionalmente, se realiza una estandarización a las variables cuantitativas denominadas como $Variables~~de~~comportamiento~~de~~los~~clientes~~en~~canales~~y~~productos$, para cada una de las observaciones de estas variables se asigna uno de los cuartiles dependiendo el valor que dicha observación tenga. Lo anterior, se hace con el fin de obtener una mejor segmentación de los datos más adelante. Con esta estandarización, el conjunto de variables queda compuesto por variables categóricas ordinales y binarias.
 
-```{r}
+```{r include=FALSE}
 library(gtools)
 datos_cluster <- select(datos_completos, -c(nit,rotacion_inventarios, rotacion_cxc, rotacion_cxp))
 
@@ -334,7 +328,14 @@ datos_cluster$ciclo_negocio <- ordered(datos_cluster$ciclo_negocio,levels=1:6)
 datos_cluster$ciclo_financiero <- ordered(datos_cluster$ciclo_financiero,levels=1:6)
 ```
 
-#### Agrupación
+El resultado obtenido para la base de datos se muestra a continuación:
+
+```{r}
+kable(summary(datos_cluster), caption = "NÚMERO DE OBSERVACIÓNES PARA CADA VARIABLE EN CADA CUARTIL")
+```
+
+
+#### 2. Agrupación
 Una vez se ha procesado la base de datos con que se trabajará y se ha
 establecido la forma de los datos, se procede con el análisis para
 segmentar a los clientes corporativos. Para cumplir con lo anterior, en
@@ -453,9 +454,10 @@ library(factoextra)
 fviz_nbclust(datos_cluster, FUN = hcut, method = "silhouette")
 ```
 
-Teniendo en cuenta el diagrama de codos, se evidencia que a partir de 4 grupos deja de ser significativo el cambio. Por dicha razón, se evidencian cuatro grupos interesantes para estudiar. 
+Teniendo en cuenta el diagrama de codos, a pesar de que se sugiere trabajar con k=2 se puede analizar que la segmentación queda con unos grupos totalmente desproporcionados puesto que queda uno muy grande y otro muy pequeño. Además, se evidencia que a partir de 4 grupos deja de ser significativo el cambio. Por dicha razón, se evidencian cuatro grupos interesantes para estudiar. 
 
-#### Caracterización estadística de los grupos seleccionados
+
+#### 3. Caracterización estadística de los grupos seleccionados
 Para cada uno de los grupos, se realiza una tabla descriptiva teniendo en cuenta cada una de las variables de la base de datos, así:
 
 $GRUPO~~1$
@@ -555,76 +557,78 @@ formattable(grupo1, sapply(names(grupo1), function(row) {
                rownames = FALSE)
 ```
 
+
 ### Descripción de resultados
+De los resultados estadísticos obtenidos anteriormente, se llega a:
 
-GRUPO 1.
-Comportamiento de los clientes.
-Entradas:
--	Valor del ticket promedio en cuartil 1
--	Cantidad de transacciones mensuales promedio en cuartil 1
-Salidas:
--	Valor del ticket promedio en cuartil 1 
--	Cantidad de transacciones mensuales promedio en el cuartil 1 
-DESCRIPCIÓN: Podría decirse entonces que las empresas pertenecientes a este grupo son pequeñas y no muy conocidas, dado que sus movimientos o cantidad de transacciones por medio de entornos físicos y/o virtuales son pocos, ya sean de entrada o de salida; y con productos no muy costosos, pues el valor de sus transacciones tanto de entrada como de salida son muy bajos dentro del total de clientes (¿?). 
-Estados financieros y características.
--	Importaciones-compras, exportaciones-ventas en categorías 1 y 2
--	Las cxp y cxc en categorías 1 y 2
--	Valor de inventarios en categoría 1
--	Ciclos de negocio y financiero en categorías 4, 5 y 6
--	Pagos personas jurídicas en categoría 3-4 y personas naturales 1-2
+**Grupo 1**: El comportamiento de los clientes segmentados en este grupo se describe de la siguiente manera:
 
-GRUPO 2.
-Comportamiento de los clientes.
-Entradas:
--	Valor del ticket promedio en cuartil 2-3-4 para todos los canales a excepción del 7,10 y otros, que se encuentra en el cuartil 1
--	Cantidad de transacciones mensuales promedio en cuartil 2-3-4 para todos los canales, a excepción del 7,10 y otros que se encuentra en el cuartil 1
-Salidas:
--	Valor del ticket promedio en cuartil 1 y2
--	Cantidad de transacciones mensuales promedio en el cuartil 1 y 3
-DESCRIPCIÓN: Este grupo está conformado por empresas medianas, pues posee una cantidad considerable de transacciones de entrada, con valores de transacciones medios/elevados, por lo que ofrecen productos y/o servicios de más calidad. Además, no suelen utilizar canales como el 7,10 y otros; y cuando lo hacen, el valor medio de sus transacciones se encuentra en el menor rango. Podría existir desconfianza para dichos canales (¿?).
-El valor de las transacciones promedio de salida es bajo, se demoran en pagar (¿?). 
-Estados financieros y características.
--	Importaciones-compras, exportaciones-ventas en categorías 1 y 2
--	Las cxp y cxc en categorías 1 y 2
--	Valor de inventarios en categoría 2-3
--	Pagos personas jurídicas en categoría 2 y personas naturales 3-4
--	Más tiendas virtuales que fisicas
--	Ciclos de negocio en categorías 4, 5 y 6 y financiero en 5 y 6
-GRUPO 3.
-Comportamiento de los clientes.
-Entradas:
--	Valor del ticket promedio en cuartil 4 para todos los canales a excepción del 7,10 y otros, que se encuentra en el cuartil 1 y 2
--	Cantidad de transacciones mensuales promedio en cuartil 4 para todos los canales, a excepción del 7,10 y otros que se encuentra en el cuartil 1 y 2
-Salidas:
--	Valor del ticket promedio en cuartil 4, 1 y 2
--	Cantidad de transacciones mensuales promedio en el cuartil 4, 1 y 2
-DESCRIPCIÓN: Este grupo cuenta con empresas grandes, pues posee gran cantidad de transacciones promedio de entrada que ofrecen productos y/o servicios de alta calidad, pues poseen un valor de transacciones alto. Al igual que el grupo 2, estas empresas usan poco los canales 7,10 y otros para todo lo relacionado con las entradas, como por ejemplo recaudos y consignaciones. Podría decirse que existe desconfianza en el uso de dichos canales.
+-   *Variables de comportamiento de los clientes en canales y productos*
+    -   En las entradas, el valor del ticket promedio se encuentra en el cuartil 1. De la misma manera, la cantidad de transacciones mensuales promedio se encuentran en el cuartil 1. De esto se puede concluir que a este grupo pertenecen aquellas empresas con valores más bajos de entrada y con número de transacciones más bajas.
+    -   En las salidas, el valor del ticket promedio se encuentra en el cuartil 1. De la misma manera, la cantidad de transacciones mensuales promedio se encuentran en el cuartil 1. De lo anterior, se concluye que este grupo de empresas tienen los valores más bajos de salida tanto para los tickets como para el número de transacciones.
+    
+Podría pensarse entonces que las empresas pertenecientes a este grupo son pequeñas, dado que sus movimientos o cantidad de transacciones por medio de entornos físicos y/o virtuales son bajos, ya sean de entrada o de salida. Podría intuirse que dado a su clasificación de tamaño, que los ingresos y egresos son acordes, pues el valor de sus transacciones tanto de entrada como de salida son muy bajos dentro del total de clientes. 
+
+-   *Variables de estados financieros y características de los clientes*
+    -   Importaciones-compras, exportaciones-ventas en categorías 1 y 2
+    -   Las cxp y cxc en categorías 1 y 2
+    -   Valor de inventarios en categoría 1
+    -   Ciclos de negocio y financiero en categorías 4, 5 y 6
+    -   Pagos personas jurídicas en categoría 3-4 y personas naturales 1-2
+    
+
+**Grupo 2**: El comportamiento de los clientes segmentados en este grupo se describe de la siguiente manera:
+
+-   *Variables de comportamiento de los clientes en canales y productos*
+    -   En las entradas, el valor del ticket promedio en cuartil 2-3-4 para todos los canales a excepción del 7,10 y otros, que se encuentra en el cuartil 1. Cantidad de transacciones mensuales promedio en cuartil 2-3-4 para todos los canales, a excepción del 7,10 y otros que se encuentra en el cuartil 1.
+    -   En las salidas, Valor del ticket promedio en cuartil 1 y 2, la cantidad de transacciones mensuales promedio se encuentran en el cuartil 1 y 3. 
+    
+Este grupo está conformado por empresas medianas, pues posee una cantidad considerable de transacciones de entrada, con valores de transacciones medios/elevados, por lo que ofrecen productos y/o servicios de más calidad. Además, no suelen utilizar canales como el 7,10 y otros; y cuando lo hacen, el valor medio de sus transacciones se encuentra en el menor rango. Podría existir desconfianza para dichos canales (¿?).
+El valor de las transacciones promedio de salida es bajo, se demoran en pagar (¿?).
+
+-   *Variables de estados financieros y características de los clientes*
+    -   Importaciones-compras, exportaciones-ventas en categorías 1 y 2
+    -   Las cxp y cxc en categorías 1 y 2
+    -   Valor de inventarios en categoría 2-3
+    -   Ciclos de negocio en categorías 4, 5 y 6 y financiero en 5 y 6
+    -   Pagos personas jurídicas en categoría 2 y personas naturales 3-4
+    -   Más tiendas virtuales que fisicas
+
+
+**Grupo 3**: El comportamiento de los clientes segmentados en este grupo se describe de la siguiente manera:
+
+-   *Variables de comportamiento de los clientes en canales y productos*
+    -   En las entradas, el Valor del ticket promedio en cuartil 4 para todos los canales a excepción del 7,10 y otros, que se encuentra en el cuartil 1 y 2. Cantidad de transacciones mensuales promedio en cuartil 4 para todos los canales, a excepción del 7,10 y otros que se encuentra en el cuartil 1 y 2.
+    -   En las salidas, Valor del ticket promedio en cuartil 4, 1 y 2, la Cantidad de transacciones mensuales promedio en el cuartil 4, 1 y 2. 
+    
+Este grupo cuenta con empresas grandes, pues posee gran cantidad de transacciones promedio de entrada que ofrecen productos y/o servicios de alta calidad, pues poseen un valor de transacciones alto. Al igual que el grupo 2, estas empresas usan poco los canales 7,10 y otros para todo lo relacionado con las entradas, como por ejemplo recaudos y consignaciones. Podría decirse que existe desconfianza en el uso de dichos canales.
 Cantidad de transacciones y valor promedio de transacción para las salidas está entre bajo (1-2) y alto (4). Se puede explicar por la gran cantidad de movimientos dado que son empresas grandes (¿?)
-Estados financieros y características.
--	Importaciones-compras, exportaciones-ventas en categorías 2
--	Las cxp y cxc en categorías 6
--	Valor de inventarios en categoría 6
--	Pagos personas jurídicas en categoría 1-2 y personas naturales 3-4
--	Tiendas electronicas
--	Ciclos de negocio y financiero en categorías 4, 5 y 6
-GRUPO 4.
-Comportamiento de los clientes.
-Entradas:
--	Valor del ticket promedio en cuartil 4 para todos los canales a excepción del 7,10 y otros, que se encuentra en el cuartil 1 y 2
--	Cantidad de transacciones mensuales promedio en cuartil 4 para todos los canales, a excepción del 7,10 y otros que se encuentra en el cuartil 1 y 2
-Salidas:
--	Valor del ticket promedio en cuartil 4, 1 y 2
--	Cantidad de transacciones mensuales promedio en el cuartil 4, 1 y 2
-DESCRIPCIÓN: Este grupo cuenta con empresas grandes que ofrecen productos y/o servicios de alta calidad, pues cuentan con gran cantidad de entradas para la mayoría de sus canales con valores de transacción promedio elevados. Las empresas de este grupo también poseen desconfianza en los canales 7,10 y otros para todo lo relacionado con devoluciones, recaudos, consignaciones, entre otros; dado que la cantidad de transacciones y el valor de estas es bajo. Existe desconfianza en el uso de dichos canales para transacciones de entrada importantes.
+
+-   *Variables de estados financieros y características de los clientes*
+    -   Importaciones-compras, exportaciones-ventas en categorías 2
+    -   Las cxp y cxc en categorías 6
+    -   Valor de inventarios en categoría 6
+    -   Ciclos de negocio y financiero en categorías 4, 5 y 6
+    -   Pagos personas jurídicas en categoría 1-2 y personas naturales 3-4
+    -   Tiendas electronicas
+
+
+**Grupo 4**: El comportamiento de los clientes segmentados en este grupo se describe de la siguiente manera:
+
+-   *Variables de comportamiento de los clientes en canales y productos*
+    -   En las entradas, Valor del ticket promedio en cuartil 4 para todos los canales a excepción del 7,10 y otros, que se encuentra en el cuartil 1 y 2. Cantidad de transacciones mensuales promedio en cuartil 4 para todos los canales, a excepción del 7,10 y otros que se encuentra en el cuartil 1 y 2
+    -   En las salidas, Valor del ticket promedio en cuartil 4, 1 y 2, Cantidad de transacciones mensuales promedio en el cuartil 4, 1 y 2
+    
+Este grupo cuenta con empresas grandes que ofrecen productos y/o servicios de alta calidad, pues cuentan con gran cantidad de entradas para la mayoría de sus canales con valores de transacción promedio elevados. Las empresas de este grupo también poseen desconfianza en los canales 7,10 y otros para todo lo relacionado con devoluciones, recaudos, consignaciones, entre otros; dado que la cantidad de transacciones y el valor de estas es bajo. Existe desconfianza en el uso de dichos canales para transacciones de entrada importantes.
 Cantidad de transacciones y valor promedio de transacción para las salidas está entre bajo (1-2) y alto (4). Se puede explicar por la gran cantidad de movimientos dado que son empresas grandes (¿¡)
-Estados financieros y características.
--	Importaciones-compras, exportaciones-ventas en categorías 1-2
--	Las cxp y cxc en categorías 1-2-3
--	Valor de inventarios en categoría 1-2-3
--	Pagos personas jurídicas en categoría y personas naturales 2-3-4
--	Ciclos de negocio 4-5-6 y financiero en categorías 5-6
 
-
+-   *Variables de estados financieros y características de los clientes*:
+    -   Importaciones-compras, exportaciones-ventas en categorías 1 y 2
+    -   Las cxp y cxc en categorías 1-2-3
+    -   Valor de inventarios en categoría 1-2-3
+    -   Ciclos de negocio 4-5-6 y financiero en categorías 5-6
+    -   Pagos personas jurídicas en categoría y personas naturales 2-3-4    
+      
 ### Conclusiones
 
 ### Referencias
