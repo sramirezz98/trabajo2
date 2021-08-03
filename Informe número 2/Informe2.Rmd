@@ -36,6 +36,7 @@ library(DT)
 library(cluster)
 library(formattable)
 library(tidyr)
+library("dendextend")
 ```
 
 **Objetivo**: Realizar la segmentación de clientes para una empresa
@@ -131,7 +132,7 @@ variables en total, las cuales se dividen en 2 grupos principales:
 datos_completos <- read.csv("base_trabajo_segmentacion.csv", header = TRUE, sep = ";")
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 datos_completos <- select(datos_completos, -c(recaudos_pj, recaudos_pn))
 attach(datos_completos)
 ```
@@ -212,71 +213,18 @@ ggcorrplot(cor_mat1,method = "square", lab=TRUE, lab_size = 2.2, tl.cex = 8, col
 ```
 
 ### Desarrollo estadístico
-```{r}
-hist(datos_completos$en_vm_canal1)
-hist(datos_completos$en_vm_canal2)
-hist(datos_completos$en_vm_canal3)
-hist(datos_completos$en_vm_canal4)
-hist(datos_completos$en_vm_canal5)
-hist(datos_completos$en_vm_canal6)
-hist(datos_completos$en_vm_canal7)
-hist(datos_completos$en_vm_canal8)
-hist(datos_completos$en_vm_canal9)
-hist(datos_completos$en_vm_canal10)
-hist(datos_completos$en_vm_otros)
-hist(datos_completos$en_tx_canal1)
-hist(datos_completos$en_tx_canal2)
-hist(datos_completos$en_tx_canal3)
-hist(datos_completos$en_tx_canal4)
-hist(datos_completos$en_tx_canal5)
-hist(datos_completos$en_tx_canal6)
-hist(datos_completos$en_tx_canal7)
-hist(datos_completos$en_tx_canal8)
-hist(datos_completos$en_tx_canal9)
-hist(datos_completos$en_tx_canal10)
-hist(datos_completos$en_tx_otros)
-hist(datos_completos$impo_cv)
-hist(datos_completos$expo_vt)
-hist(datos_completos$cxp)
-hist(datos_completos$cxc)
-hist(datos_completos$totalinventory)
-hist(datos_completos$pagos_pj)
-hist(datos_completos$pagos_pn)
-hist(datos_completos$tiene_ventas_fisicas)
-hist(datos_completos$tiene_ventas_electronicas)
-hist(datos_completos$rotacion_inventarios)
-hist(datos_completos$rotacion_cxc)
-hist(datos_completos$rotacion_cxp)
-hist(datos_completos$ciclo_negocio)
-hist(datos_completos$ciclo_financiero)
-```
-
-#### Selección de variables
-
+#### Selección y procesamiento de variables
 En primer lugar, se eliminarón las variables `recaudos_pn` y
 `recaudos_pj`, porque no contenían información relevante, pues eran una
 constante igual a $0$. Por el lado de las variables de estados
 financieros, se eliminan las variables `rotacion_inventarios`,
 `rotacion_cxc` y `rotacion_cxp`, puesto que desde el punto de vista
 contable estas se pueden resumir en las variables `ciclo_negocio` y
-`ciclo_financiero`.
+`ciclo_financiero`. Adicionalmente, se realiza una estandarización a las variables cuantitativas denominadas como $Variables~~de~~comportamiento~~de~~los~~clientes~~en~~canales~~y~~productos$, para cada una de las observaciones de estas variables se asigna uno de los cuartiles dependiendo el valor que dicha observación tenga. Lo anterior, se hace con el fin de obtener una mejor segmentación de los datos más adelante. Con esta estandarización, el conjunto de variables queda compuesto por variables categóricas ordinales y binarias. 
 
 ```{r}
 library(gtools)
 datos_cluster <- select(datos_completos, -c(nit,rotacion_inventarios, rotacion_cxc, rotacion_cxp))
-# percentil<-quantcut(datos_cluster$en_vm_canal1, q = 10)
-# datos_cluster$percentil <- percentil
-# datos_cluster$percentil <- as.character(datos_cluster$percentil)
-# datos_cluster <- datos_cluster %>% mutate(percentil = ifelse(percentil == "[0,7.93e+05]", 1, percentil), 
-#                           percentil = ifelse(percentil == "(7.93e+05,2.5e+07]", 2, percentil),
-#                            percentil = ifelse(percentil == "(2.5e+07,8.3e+07]", 3, percentil),
-#                             percentil = ifelse(percentil == "(8.3e+07,1.78e+08]", 4, percentil),
-#                              percentil = ifelse(percentil == "(1.78e+08,3.49e+08]", 5, percentil),
-#                               percentil = ifelse(percentil == "(3.49e+08,6.01e+08]", 6, percentil),
-#                                percentil = ifelse(percentil == "(6.01e+08,9.63e+08]", 7, percentil),
-#                                 percentil = ifelse(percentil == "(9.63e+08,1.72e+09]", 8, percentil),
-#                                  percentil = ifelse(percentil == "(1.72e+09,3.69e+09]", 9, percentil),
-#                                   percentil = ifelse(percentil == "(3.69e+09,2.51e+11]", 10, percentil))
 
 datos_cluster$en_vm_canal1 <- quantcut(datos_cluster$en_vm_canal1,q = 4,labels = c("1","2","3","4"))
 datos_cluster$en_vm_canal2 <- quantcut(datos_cluster$en_vm_canal2,q = 4,labels = c("1","2","3","4"))
@@ -319,7 +267,6 @@ levels(datos_cluster$en_tx_canal10) <- c("1", "2", "3","4")
 datos_cluster$en_tx_otros <- quantcut(datos_cluster$en_tx_otros,q = 4)
 levels(datos_cluster$en_tx_otros) <- c("1", "2", "3","4")
 
-                                                                                          
 datos_cluster$sal_vm_canal2 <- quantcut(datos_cluster$sal_vm_canal2,q = 4,labels = c("1","2","3","4"))
 datos_cluster$sal_vm_canal5 <- quantcut(datos_cluster$sal_vm_canal5,q = 4)
 levels(datos_cluster$sal_vm_canal5) <- c("1", "2", "3","4")
@@ -338,11 +285,6 @@ levels(datos_cluster$sal_tx_otros) <- c("1", "2", "3","4")
 
 datos_cluster$pagos_pj <- quantcut(datos_cluster$pagos_pj,q = 4,labels = c("1","2","3","4"))
 datos_cluster$pagos_pn <- quantcut(datos_cluster$pagos_pn,q = 4,labels = c("1","2","3","4"))
-
-
-
-
-
 
 datos_cluster$en_vm_canal1 <- ordered(datos_cluster$en_vm_canal1,levels=1:4)
 datos_cluster$en_vm_canal2 <- ordered(datos_cluster$en_vm_canal2,levels=1:4)
@@ -390,19 +332,11 @@ datos_cluster$tiene_ventas_fisicas <- as.factor(datos_cluster$tiene_ventas_fisic
 datos_cluster$tiene_ventas_electronicas <- as.factor(datos_cluster$tiene_ventas_electronicas)
 datos_cluster$ciclo_negocio <- ordered(datos_cluster$ciclo_negocio,levels=1:6)
 datos_cluster$ciclo_financiero <- ordered(datos_cluster$ciclo_financiero,levels=1:6)
-
-
-
-```
-
-```{r}
-str(datos_cluster)
 ```
 
 #### Agrupación
-
-Una vez se ha establecido la base de datos con que se trabajará y se ha
-conocido la forma de los datos, se procede con el análisis para
+Una vez se ha procesado la base de datos con que se trabajará y se ha
+establecido la forma de los datos, se procede con el análisis para
 segmentar a los clientes corporativos. Para cumplir con lo anterior, en
 primer lugar se debe tener alguna medida de similitudes o disimilitudes
 entre las variables, por ello se calcula la distancia de Gower (1971),
@@ -429,47 +363,105 @@ continuación:
 
 Este método es sensible a la no normalidad y a datos atípicos, por lo
 que la transformación de las variables son un paso necesario como parte
-del preprocesamiento de datos.
-
-Explicación función gower distance:
-https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/daisy
+del preprocesamiento de datos [1].
 
 ```{r}
 dist_gower <- daisy(datos_cluster,metric = "gower")
-summary(dist_gower)
+d <- summary(dist_gower)
+d <- d$summ
+d <- t(d)[,c(1:6)]
+kable(d, col.names ="Valor", align = 'c', caption = "Medidas de tendencia para la distancia de Gower")
 ```
-Haciendo agrupamiento jerarquico/aglomerativo, utilizando ward.D como método para medir distancias entre grupos.
 
+Haciendo agrupamiento jerarquico/aglomerativo, utilizando el método $complete$ para medir distancias entre grupos, se obtiene lo siguiente:
 
 ```{r}
 cluster_jerar <- hclust(dist_gower,method = "complete")
-plot(cluster_jerar)
+plot(cluster_jerar, main = "Dendograma", ylab = "Altura", xlab = "Distancia de Gower - Método 'Complete'")
 ```
 
-Si seleccionamos 4 grupos
+De acuerdo al gráfico, se identifican varios cortes de altura para seleccionar la cantidad de grupos teniendo en cuenta que a mayor cantidad más difícil puede llegar a ser la administración de dichos grupos, por lo cual se tienen en cuenta hasta cinco grupos para el análisis.
+
 ```{r}
-etiqueta_grupo <- cutree(cluster_jerar,k=4)
-table(etiqueta_grupo)
-```
-Mejorando el dendograma
-```{r}
-library("dendextend")
+etiqueta_grupo2 <- cutree(cluster_jerar,k=2)
+kable(table(etiqueta_grupo2), col.names = c("Grupo", "Cantidad de usuarios"), align = 'c')
+
 dendro <- as.dendrogram(cluster_jerar)
 dendro.col <- dendro %>%
-  set("branches_k_color", k = 4, value =   c("darkslategray", "darkslategray4", "darkslategray3", "gold3")) %>%
+  set("branches_k_color", k = 2, value =   c("darkslategray2", "darkslategray3")) %>%
   set("branches_lwd", 0.6) %>%
   set("labels_colors", 
       value = c("darkslategray")) %>% 
   set("labels_cex", 0.5)
 ggd1 <- as.ggdend(dendro.col)
 ggplot(ggd1, theme = theme_minimal()) +
-  labs(x = "Num. observations", y = "Height", title = "Dendrogram, k = 4")
-  
+  labs(x = "Número de observaciones", y = "Altura", title = "Dendrograma, k = 2")
+
+etiqueta_grupo3 <- cutree(cluster_jerar,k=3)
+kable(table(etiqueta_grupo3), col.names = c("Grupo", "Cantidad de usuarios"), align = 'c')
+
+dendro <- as.dendrogram(cluster_jerar)
+dendro.col <- dendro %>%
+  set("branches_k_color", k = 3, value =   c("darkslategray2", "darkslategray3", "darkslategray4")) %>%
+  set("branches_lwd", 0.6) %>%
+  set("labels_colors", 
+      value = c("darkslategray")) %>% 
+  set("labels_cex", 0.5)
+ggd1 <- as.ggdend(dendro.col)
+ggplot(ggd1, theme = theme_minimal()) +
+  labs(x = "Número de observaciones", y = "Altura", title = "Dendrograma, k = 3")
+
+etiqueta_grupo4 <- cutree(cluster_jerar,k=4)
+kable(table(etiqueta_grupo4), col.names = c("Grupo", "Cantidad de usuarios"), align = 'c')
+
+dendro <- as.dendrogram(cluster_jerar)
+dendro.col <- dendro %>%
+  set("branches_k_color", k = 4, value =   c("darkslategray2", "darkslategray3", "darkslategray4","darkslategray")) %>%
+  set("branches_lwd", 0.6) %>%
+  set("labels_colors", 
+      value = c("darkslategray")) %>% 
+  set("labels_cex", 0.5)
+ggd1 <- as.ggdend(dendro.col)
+ggplot(ggd1, theme = theme_minimal()) +
+  labs(x = "Número de observaciones", y = "Altura", title = "Dendrograma, k = 4")
+
+etiqueta_grupo5 <- cutree(cluster_jerar,k=5)
+kable(table(etiqueta_grupo5), col.names = c("Grupo", "Cantidad de usuarios"), align = 'c')
+
+dendro <- as.dendrogram(cluster_jerar)
+dendro.col <- dendro %>%
+  set("branches_k_color", k = 5, value =   c("darkslategray1","darkslategray2", "darkslategray3", "darkslategray4","darkslategray")) %>%
+  set("branches_lwd", 0.6) %>%
+  set("labels_colors", 
+      value = c("darkslategray")) %>% 
+  set("labels_cex", 0.5)
+ggd1 <- as.ggdend(dendro.col)
+ggplot(ggd1, theme = theme_minimal()) +
+  labs(x = "Número de observaciones", y = "Altura", title = "Dendrograma, k = 5")
+
 ```
-Ver las características de cada grupo...
+
+De las gráficas anteriores, se observa que:
+    -   Para k=2 se obtienen dos grupos desproporcionados debido a que uno de ellos queda con una cantidad de usuarios de 1828 y el otro con 405.
+    -   Para k=3 se obtienen tres grupos medianamente proporcionados en los que se distribuye la cantidad de usarios en 964, 405 y 864.
+    -   Para k=4 se obtienen cuatro grupos proporcionados en los que se distribuyen los usuarios en 570, 394, 405 y 864.
+    -   Para k=5 se obtiene lo mismo de k=4 con la diferencia que el grupo 2 se divide en dos partes iguales volviendo un poco desequilibrados los grupos. 
+  
+No obstante, se complementa el análisis por medio de un diagrama de codos, como se evidencia a continuación:
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(factoextra)
+fviz_nbclust(datos_cluster, FUN = hcut, method = "silhouette")
+```
+
+Teniendo en cuenta el diagrama de codos, se evidencia que a partir de 4 grupos deja de ser significativo el cambio. Por dicha razón, se evidencian cuatro grupos interesantes para estudiar. 
+
+#### Caracterización estadística de los grupos seleccionados
+Para cada uno de los grupos, se realiza una tabla descriptiva teniendo en cuenta cada una de las variables de la base de datos, así:
+
+$GRUPO~~1$
 ```{r}
 library(DT)
-descripcion <- summary(datos_cluster[etiqueta_grupo==1,])
+descripcion <- summary(datos_cluster[etiqueta_grupo4==1,])
 descripcion <- as.data.frame(descripcion)
 descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
 
@@ -489,16 +481,11 @@ formattable(grupo1, sapply(names(grupo1), function(row) {
   as.datatable(escape = FALSE,
                options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
                rownames = FALSE)
-
-
-
-
-
 ```
-Grupo 2
 
+$GRUPO~~2$
 ```{r}
-descripcion <- summary(datos_cluster[etiqueta_grupo==2,])
+descripcion <- summary(datos_cluster[etiqueta_grupo4==2,])
 descripcion <- as.data.frame(descripcion)
 descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
 
@@ -519,10 +506,10 @@ formattable(grupo1, sapply(names(grupo1), function(row) {
                options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
                rownames = FALSE)
 ```
-grupo 3
 
+$GRUPO ~~ 3$
 ```{r}
-descripcion <- summary(datos_cluster[etiqueta_grupo==3,])
+descripcion <- summary(datos_cluster[etiqueta_grupo4==3,])
 descripcion <- as.data.frame(descripcion)
 descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
 
@@ -543,10 +530,10 @@ formattable(grupo1, sapply(names(grupo1), function(row) {
                options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
                rownames = FALSE)
 ```
-grupo 4
 
+$GRUPO ~~ 4$
 ```{r}
-descripcion <- summary(datos_cluster[etiqueta_grupo==4,])
+descripcion <- summary(datos_cluster[etiqueta_grupo4==4,])
 descripcion <- as.data.frame(descripcion)
 descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
 
@@ -567,14 +554,10 @@ formattable(grupo1, sapply(names(grupo1), function(row) {
                options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
                rownames = FALSE)
 ```
-
-
-Agrupamiento jerarquico divisivo
-
-
-#### Selección de agrupación final
 
 ### Descripción de resultados
 
 ### Conclusiones
-:::
+
+### Referencias
+[1]. https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/daisy
