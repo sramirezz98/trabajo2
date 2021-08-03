@@ -557,6 +557,74 @@ formattable(grupo1, sapply(names(grupo1), function(row) {
 
 ### Descripción de resultados
 
+GRUPO 1.
+Comportamiento de los clientes.
+Entradas:
+-	Valor del ticket promedio en cuartil 1
+-	Cantidad de transacciones mensuales promedio en cuartil 1
+Salidas:
+-	Valor del ticket promedio en cuartil 1 
+-	Cantidad de transacciones mensuales promedio en el cuartil 1 
+DESCRIPCIÓN: Podría decirse entonces que las empresas pertenecientes a este grupo son pequeñas y no muy conocidas, dado que sus movimientos o cantidad de transacciones por medio de entornos físicos y/o virtuales son pocos, ya sean de entrada o de salida; y con productos no muy costosos, pues el valor de sus transacciones tanto de entrada como de salida son muy bajos dentro del total de clientes (¿?). 
+Estados financieros y características.
+-	Importaciones-compras, exportaciones-ventas en categorías 1 y 2
+-	Las cxp y cxc en categorías 1 y 2
+-	Valor de inventarios en categoría 1
+-	Ciclos de negocio y financiero en categorías 4, 5 y 6
+-	Pagos personas jurídicas en categoría 3-4 y personas naturales 1-2
+
+GRUPO 2.
+Comportamiento de los clientes.
+Entradas:
+-	Valor del ticket promedio en cuartil 2-3-4 para todos los canales a excepción del 7,10 y otros, que se encuentra en el cuartil 1
+-	Cantidad de transacciones mensuales promedio en cuartil 2-3-4 para todos los canales, a excepción del 7,10 y otros que se encuentra en el cuartil 1
+Salidas:
+-	Valor del ticket promedio en cuartil 1 y2
+-	Cantidad de transacciones mensuales promedio en el cuartil 1 y 3
+DESCRIPCIÓN: Este grupo está conformado por empresas medianas, pues posee una cantidad considerable de transacciones de entrada, con valores de transacciones medios/elevados, por lo que ofrecen productos y/o servicios de más calidad. Además, no suelen utilizar canales como el 7,10 y otros; y cuando lo hacen, el valor medio de sus transacciones se encuentra en el menor rango. Podría existir desconfianza para dichos canales (¿?).
+El valor de las transacciones promedio de salida es bajo, se demoran en pagar (¿?). 
+Estados financieros y características.
+-	Importaciones-compras, exportaciones-ventas en categorías 1 y 2
+-	Las cxp y cxc en categorías 1 y 2
+-	Valor de inventarios en categoría 2-3
+-	Pagos personas jurídicas en categoría 2 y personas naturales 3-4
+-	Más tiendas virtuales que fisicas
+-	Ciclos de negocio en categorías 4, 5 y 6 y financiero en 5 y 6
+GRUPO 3.
+Comportamiento de los clientes.
+Entradas:
+-	Valor del ticket promedio en cuartil 4 para todos los canales a excepción del 7,10 y otros, que se encuentra en el cuartil 1 y 2
+-	Cantidad de transacciones mensuales promedio en cuartil 4 para todos los canales, a excepción del 7,10 y otros que se encuentra en el cuartil 1 y 2
+Salidas:
+-	Valor del ticket promedio en cuartil 4, 1 y 2
+-	Cantidad de transacciones mensuales promedio en el cuartil 4, 1 y 2
+DESCRIPCIÓN: Este grupo cuenta con empresas grandes, pues posee gran cantidad de transacciones promedio de entrada que ofrecen productos y/o servicios de alta calidad, pues poseen un valor de transacciones alto. Al igual que el grupo 2, estas empresas usan poco los canales 7,10 y otros para todo lo relacionado con las entradas, como por ejemplo recaudos y consignaciones. Podría decirse que existe desconfianza en el uso de dichos canales.
+Cantidad de transacciones y valor promedio de transacción para las salidas está entre bajo (1-2) y alto (4). Se puede explicar por la gran cantidad de movimientos dado que son empresas grandes (¿?)
+Estados financieros y características.
+-	Importaciones-compras, exportaciones-ventas en categorías 2
+-	Las cxp y cxc en categorías 6
+-	Valor de inventarios en categoría 6
+-	Pagos personas jurídicas en categoría 1-2 y personas naturales 3-4
+-	Tiendas electronicas
+-	Ciclos de negocio y financiero en categorías 4, 5 y 6
+GRUPO 4.
+Comportamiento de los clientes.
+Entradas:
+-	Valor del ticket promedio en cuartil 4 para todos los canales a excepción del 7,10 y otros, que se encuentra en el cuartil 1 y 2
+-	Cantidad de transacciones mensuales promedio en cuartil 4 para todos los canales, a excepción del 7,10 y otros que se encuentra en el cuartil 1 y 2
+Salidas:
+-	Valor del ticket promedio en cuartil 4, 1 y 2
+-	Cantidad de transacciones mensuales promedio en el cuartil 4, 1 y 2
+DESCRIPCIÓN: Este grupo cuenta con empresas grandes que ofrecen productos y/o servicios de alta calidad, pues cuentan con gran cantidad de entradas para la mayoría de sus canales con valores de transacción promedio elevados. Las empresas de este grupo también poseen desconfianza en los canales 7,10 y otros para todo lo relacionado con devoluciones, recaudos, consignaciones, entre otros; dado que la cantidad de transacciones y el valor de estas es bajo. Existe desconfianza en el uso de dichos canales para transacciones de entrada importantes.
+Cantidad de transacciones y valor promedio de transacción para las salidas está entre bajo (1-2) y alto (4). Se puede explicar por la gran cantidad de movimientos dado que son empresas grandes (¿¡)
+Estados financieros y características.
+-	Importaciones-compras, exportaciones-ventas en categorías 1-2
+-	Las cxp y cxc en categorías 1-2-3
+-	Valor de inventarios en categoría 1-2-3
+-	Pagos personas jurídicas en categoría y personas naturales 2-3-4
+-	Ciclos de negocio 4-5-6 y financiero en categorías 5-6
+
+
 ### Conclusiones
 
 ### Referencias
