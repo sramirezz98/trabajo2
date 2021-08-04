@@ -464,8 +464,11 @@ Para cada uno de los grupos, se realiza una tabla descriptiva teniendo en cuenta
 $GRUPO~~1$
 ```{r}
 library(DT)
+
+
 descripcion <- summary(datos_cluster[etiqueta_grupo4==1,])
 descripcion <- as.data.frame(descripcion)
+
 descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
 
 descripcion$Freq <- as.character(descripcion$Freq)
@@ -475,10 +478,14 @@ descripcion$Freq <- as.integer(descripcion$Freq)
 descripcion$Freq <- ifelse(is.na(descripcion$Freq), '', descripcion$Freq)
 
 grupo1 <- pivot_wider(descripcion,names_from = Var2,values_from = Freq)
+names(grupo1)[names(grupo1) == "Var1"] <- "Categoria"
 
-#formattable(grupo1,list( grupo1[,]= color_tile("#DeF7E9", "#71CA97")))
+```
+Tabla de variables de comportamiento de los clientes en canales y productos:
 
-formattable(grupo1, sapply(names(grupo1), function(row) {
+```{r}
+#Tabla de variables de comportamiento de los clientes en canales y productos:
+formattable(grupo1[1:31],sapply(names(grupo1[2:31]), function(row) {
   row = color_tile("#DeF7E9", "#71CA97")
 })) %>%
   as.datatable(escape = FALSE,
@@ -486,10 +493,24 @@ formattable(grupo1, sapply(names(grupo1), function(row) {
                rownames = FALSE)
 ```
 
+Tabla de variables de estados financieros y características de los clientes
+
+```{r}
+#Tabla de variables de estados financieros y características de los clientes
+formattable(grupo1 %>% select(Categoria, impo_cv:ciclo_financiero), sapply(names(grupo1 %>% select(impo_cv:ciclo_financiero)), function(row) {
+  row = color_tile("#DeF7E9", "#71CA97")
+})) %>%
+  as.datatable(escape = FALSE,
+               options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
+               rownames = FALSE)
+```
+
+
 $GRUPO~~2$
 ```{r}
 descripcion <- summary(datos_cluster[etiqueta_grupo4==2,])
 descripcion <- as.data.frame(descripcion)
+
 descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
 
 descripcion$Freq <- as.character(descripcion$Freq)
@@ -498,11 +519,28 @@ descripcion$Freq <- lapply(descripcion$Freq,trimws)
 descripcion$Freq <- as.integer(descripcion$Freq)
 descripcion$Freq <- ifelse(is.na(descripcion$Freq), '', descripcion$Freq)
 
-grupo1 <- pivot_wider(descripcion,names_from = Var2,values_from = Freq)
+grupo2 <- pivot_wider(descripcion,names_from = Var2,values_from = Freq)
+names(grupo2)[names(grupo2) == "Var1"] <- "Categoria"
 
-#formattable(grupo1,list( grupo1[,]= color_tile("#DeF7E9", "#71CA97")))
+```
+Tabla de variables de comportamiento de los clientes en canales y productos:
 
-formattable(grupo1, sapply(names(grupo1), function(row) {
+```{r}
+#Tabla de variables de comportamiento de los clientes en canales y productos:
+formattable(grupo2[1:31], sapply(names(grupo2[2:31]), function(row) {
+  row = color_tile("#DeF7E9", "#71CA97")
+})) %>%
+  as.datatable(escape = FALSE,
+               options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
+               rownames = FALSE)
+```
+
+
+Tabla de variables de estados financieros y características de los clientes
+
+```{r}
+#Tabla de variables de estados financieros y características de los clientes
+formattable(grupo2 %>% select(Categoria, impo_cv:ciclo_financiero), sapply(names(grupo2 %>% select(impo_cv:ciclo_financiero)), function(row) {
   row = color_tile("#DeF7E9", "#71CA97")
 })) %>%
   as.datatable(escape = FALSE,
@@ -514,6 +552,7 @@ $GRUPO ~~ 3$
 ```{r}
 descripcion <- summary(datos_cluster[etiqueta_grupo4==3,])
 descripcion <- as.data.frame(descripcion)
+
 descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
 
 descripcion$Freq <- as.character(descripcion$Freq)
@@ -522,11 +561,25 @@ descripcion$Freq <- lapply(descripcion$Freq,trimws)
 descripcion$Freq <- as.integer(descripcion$Freq)
 descripcion$Freq <- ifelse(is.na(descripcion$Freq), '', descripcion$Freq)
 
-grupo1 <- pivot_wider(descripcion,names_from = Var2,values_from = Freq)
+grupo3 <- pivot_wider(descripcion,names_from = Var2,values_from = Freq)
+names(grupo3)[names(grupo3) == "Var1"] <- "Categoria"
 
-#formattable(grupo1,list( grupo1[,]= color_tile("#DeF7E9", "#71CA97")))
+```
+Tabla de variables de comportamiento de los clientes en canales y productos:
 
-formattable(grupo1, sapply(names(grupo1), function(row) {
+```{r}
+#Tabla de variables de comportamiento de los clientes en canales y productos:
+formattable(grupo3[1:31], sapply(names(grupo3[2:31]), function(row) {
+  row = color_tile("#DeF7E9", "#71CA97")
+})) %>%
+  as.datatable(escape = FALSE,
+               options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
+               rownames = FALSE)
+```
+Tabla de variables de estados financieros y características de los clientes
+```{r}
+#Tabla de variables de estados financieros y características de los clientes
+formattable(grupo3 %>% select(Categoria, impo_cv:ciclo_financiero), sapply(names(grupo3 %>% select(impo_cv:ciclo_financiero)), function(row) {
   row = color_tile("#DeF7E9", "#71CA97")
 })) %>%
   as.datatable(escape = FALSE,
@@ -538,6 +591,7 @@ $GRUPO ~~ 4$
 ```{r}
 descripcion <- summary(datos_cluster[etiqueta_grupo4==4,])
 descripcion <- as.data.frame(descripcion)
+
 descripcion$Var1 <- rep.int(1:6,nrow(descripcion)/6)
 
 descripcion$Freq <- as.character(descripcion$Freq)
@@ -546,11 +600,26 @@ descripcion$Freq <- lapply(descripcion$Freq,trimws)
 descripcion$Freq <- as.integer(descripcion$Freq)
 descripcion$Freq <- ifelse(is.na(descripcion$Freq), '', descripcion$Freq)
 
-grupo1 <- pivot_wider(descripcion,names_from = Var2,values_from = Freq)
+grupo4 <- pivot_wider(descripcion,names_from = Var2,values_from = Freq)
+names(grupo4)[names(grupo4) == "Var1"] <- "Categoria"
 
-#formattable(grupo1,list( grupo1[,]= color_tile("#DeF7E9", "#71CA97")))
+```
+Tabla de variables de comportamiento de los clientes en canales y productos:
+```{r}
+#Tabla de variables de comportamiento de los clientes en canales y productos:
+formattable(grupo4[1:31], sapply(names(grupo4[2:31]), function(row) {
+  row = color_tile("#DeF7E9", "#71CA97")
+})) %>%
+  as.datatable(escape = FALSE,
+               options = list(scrollX = TRUE,paging = FALSE,searching = FALSE, ordering = FALSE),
+               rownames = FALSE)
+```
 
-formattable(grupo1, sapply(names(grupo1), function(row) {
+
+Tabla de variables de estados financieros y características de los clientes
+```{r}
+#Tabla de variables de estados financieros y características de los clientes
+formattable(grupo4 %>% select(Categoria, impo_cv:ciclo_financiero), sapply(names(grupo4 %>% select(impo_cv:ciclo_financiero)), function(row) {
   row = color_tile("#DeF7E9", "#71CA97")
 })) %>%
   as.datatable(escape = FALSE,
@@ -627,7 +696,7 @@ Finalmente, para este grupo se encuentra que no hay una preferencia en tiendas v
   2.    **Grupo 2:** empresas pequeñas con ingresos moderados y egresos bajos, con desconfianza en algunos canales, con bajos cxp, cxc e inventarios, con altos ciclos financieros y de negocios, con mayor pago a personas naturales y con preferencia en tiendas virtuales.  
   3.    **Grupo 3:** empresas grandes con altos ingresos, egresos, cxp, cxc, inventarios, ciclos financieros y de negocios, con mayor pago a personas naturales y con preferencia a tiendas virtuales.
   4.    **Grupo 4:** empresas medianas con ingresos y egresos altos, con cxp, cxc e inventarios medios, altos ciclos financieros y de negocios, con igual pago a personas jurídicas y naturales y sin preferencia en tiendas virtuales o físicas.
-  - En el trabajo se hace uso de la distancia de Gower debido a..... Además, se estandarizan las variables cuantitativas por medio de los cuartiles con el fin de realizar una mejor segmentación.
+  - En el trabajo se hace uso de la distancia de Gower debido a que es capaz de trabajar con variables categóricas y/o numéricas, ya que se adapta y usa una forma diferente de calcular distancias de acuerdo al tipo de variables del problema ,  Además, se estandarizan las variables cuantitativas por medio de los cuartiles convirtiendolas en variables categóricas con el fin de simplificar la lectura de los datos al momento de hacer la agrupación y lograr ser más descriptivos en el análisis de los grupos.
   
 ### Referencias
    
